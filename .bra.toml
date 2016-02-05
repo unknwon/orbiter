@@ -1,0 +1,15 @@
+[run]
+init_cmds = [
+	["go", "install"],
+	["go", "build"],
+	["./orbiter"]
+]
+watch_dirs = [
+	"modules"
+]
+watch_exts = [".go"]
+cmds = [
+	["go", "install"],
+	["go", "build"],
+	["./orbiter"]
+]
