@@ -18,6 +18,8 @@ import (
 	"html/template"
 	"time"
 
+	"github.com/dustin/go-humanize"
+
 	"github.com/Unknwon/orbiter/modules/setting"
 )
 
@@ -34,4 +36,5 @@ var Funcs template.FuncMap = map[string]interface{}{
 	"TimeFmtShort": func(t time.Time) string {
 		return t.Format("15:04:05")
 	},
+	"NumCommas": humanize.Comma,
 }

@@ -15,6 +15,7 @@
 package models
 
 import (
+	"log"
 	"time"
 )
 
@@ -87,4 +88,12 @@ func QueryWebhooks(opts QueryWebhookOptions) ([]*Webhook, error) {
 
 	webhooks := make([]*Webhook, 0, 10)
 	return webhooks, db.Find(&webhooks).Error
+}
+
+func CountWebhook() int64 {
+	var count int64
+	if err := x.Model(new(Webhook)).Count(&count).Error; err != nil {
+		log.Printf("ERROR: CountWebhook: %v", err)
+	}
+	return count
 }

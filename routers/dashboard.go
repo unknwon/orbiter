@@ -15,11 +15,15 @@
 package routers
 
 import (
+	"github.com/Unknwon/orbiter/models"
 	"github.com/Unknwon/orbiter/modules/context"
 )
 
 func Dashboard(ctx *context.Context) {
 	ctx.Data["Title"] = "Dashboard"
 	ctx.Data["PageIsDashboard"] = true
+
+	ctx.Data["NumWebhooks"] = models.CountWebhook()
+
 	ctx.HTML(200, "dashboard")
 }
