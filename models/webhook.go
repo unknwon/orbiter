@@ -39,6 +39,17 @@ func NewWebhook(webhook *Webhook) error {
 	return x.Create(webhook).Error
 }
 
+func GetWebhookByID(id int64) (*Webhook, error) {
+	webhook := new(Webhook)
+	err := x.First(webhook, id).Error
+	if IsRecordNotFound(err) {
+		return nil, ErrWebhookNotFound{id}
+	} else if err != nil {
+		return nil, err
+	}
+	return webhook, nil
+}
+
 type QueryWebhookOptions struct {
 	CollectorID int64
 	Owner       string

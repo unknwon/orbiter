@@ -19,7 +19,6 @@ import (
 	"time"
 
 	"github.com/Unknwon/com"
-	"github.com/jinzhu/gorm"
 
 	"github.com/Unknwon/orbiter/modules/tool"
 )
@@ -71,7 +70,7 @@ func NewCollector(name string, tp CollectType) (*Collector, error) {
 func GetCollectorByID(id int64) (*Collector, error) {
 	collector := new(Collector)
 	err := x.First(collector, id).Error
-	if err == gorm.RecordNotFound {
+	if IsRecordNotFound(err) {
 		return nil, ErrCollectorNotFound{id, "", ""}
 	} else if err != nil {
 		return nil, err
@@ -82,7 +81,7 @@ func GetCollectorByID(id int64) (*Collector, error) {
 func GetCollectorBySecret(secret string) (*Collector, error) {
 	collector := new(Collector)
 	err := x.Where("secret = ?", secret).First(collector).Error
-	if err == gorm.RecordNotFound {
+	if IsRecordNotFound(err) {
 		return nil, ErrCollectorNotFound{0, "", secret}
 	} else if err != nil {
 		return nil, err

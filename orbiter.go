@@ -12,6 +12,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
+// Orbiter is a tool for collecting and redistributing webhooks over the network.
 package main
 
 import (
@@ -31,7 +32,7 @@ import (
 	apiv1 "github.com/Unknwon/orbiter/routers/api/v1"
 )
 
-const APP_VER = "0.4.1.0206"
+const APP_VER = "0.5.0.0206"
 
 func init() {
 	setting.AppVer = APP_VER
@@ -78,6 +79,7 @@ func main() {
 
 		m.Group("/webhooks", func() {
 			m.Get("", routers.Webhooks)
+			m.Get("/:id", routers.ViewWebhook)
 		})
 
 		m.Get("/config", routers.Config)

@@ -18,8 +18,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
-
 	"github.com/Unknwon/orbiter/modules/tool"
 )
 
@@ -54,7 +52,7 @@ func NewApplication(name string) (*Application, error) {
 func GetApplicationByID(id int64) (*Application, error) {
 	app := new(Application)
 	err := x.First(app, id).Error
-	if err == gorm.RecordNotFound {
+	if IsRecordNotFound(err) {
 		return nil, ErrApplicationNotFound{id, "", ""}
 	} else if err != nil {
 		return nil, err
@@ -65,7 +63,7 @@ func GetApplicationByID(id int64) (*Application, error) {
 func GetApplicationByToken(token string) (*Application, error) {
 	app := new(Application)
 	err := x.Where("token = ?", token).First(app).Error
-	if err == gorm.RecordNotFound {
+	if IsRecordNotFound(err) {
 		return nil, ErrApplicationNotFound{0, "", token}
 	} else if err != nil {
 		return nil, err

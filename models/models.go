@@ -40,3 +40,7 @@ func init() {
 
 	x.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(new(Collector), new(Webhook), new(Application))
 }
+
+func IsRecordNotFound(err error) bool {
+	return err == gorm.RecordNotFound
+}

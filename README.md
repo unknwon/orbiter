@@ -1,6 +1,6 @@
 ![](public/img/orbiter-brand.png)
 
-Orbiter is a server that collects and redistributes webhooks over the network.
+Orbiter is a tool for collecting and redistributing webhooks over the network.
 
 ## Features
 
@@ -10,11 +10,16 @@ Orbiter is a server that collects and redistributes webhooks over the network.
 
 ## WTF?
 
-Oh well, it is just a tool to collect webhook history when you don't have time to process them all at the moment.
+Oh well, it is just a tool to collect webhook history when you don't have time to process them at the moment.
 
-Or, maybe you want to study later.
+Or, maybe you want to study the history later to understand a basic user action flow.
 
 And nothing else, sorry!
+
+## Acknowledgments
+
+- [AdminLTE](https://almsaeedstudio.com/): Open source Bootstrap 3 admin template
+- [Font Awesome](http://fontawesome.io/): The iconic font and CSS toolkit
 
 ## License
 

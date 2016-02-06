@@ -22,6 +22,7 @@
 		            <th>Event Type</th>
 		            <th class="hidden-sm hidden-xs">Sender</th>
 		            <th>Created</th>
+		            <th>Op.</th>
 		          </tr>
 		          {{range .Webhooks}}
 			          <tr>
@@ -33,6 +34,9 @@
 			            <td class="hidden-sm hidden-xs">{{.Sender}}</td>
 			            <td class="hidden-sm hidden-xs">{{DateFmtLong .CreatedTime}}</td>
 			            <td class="visible-sm visible-xs">{{TimeFmtShort .CreatedTime}}</td>
+			            <td>
+			            	<a href="/webhooks/{{.ID}}"><i class="fa fa-list-alt"></i></a>
+			            </td>
 			          </tr>
 		          {{end}}
 	        	</tbody>

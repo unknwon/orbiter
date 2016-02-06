@@ -15,6 +15,9 @@
 package routers
 
 import (
+	"bytes"
+	"encoding/json"
+
 	"github.com/Unknwon/orbiter/models"
 	"github.com/Unknwon/orbiter/modules/context"
 )
@@ -34,4 +37,31 @@ func Webhooks(ctx *context.Context) {
 	ctx.Data["Webhooks"] = webhooks
 
 	ctx.HTML(200, "webhook/list")
+}
+
+func ViewWebhook(ctx *context.Context) {
+	ctx.Data["Title"] = "View Webhook"
+	ctx.Data["PageIsWebhook"] = true
+	ctx.Data["RequireHighlightJS"] = true
+
+	webhook, err := models.GetWebhookByID(ctx.ParamsInt64(":id"))
+	if err != nil {
+		if models.IsErrWebhookNotFound(err) {
+			ctx.Handle(404, "GetWebhookByID", nil)
+		} else {
+			ctx.Handle(500, "GetWebhookByID", err)
+		}
+		return
+	}
+	ctx.Data["Webhook"] = webhook
+
+	// Prettify JSON in case it is not.
+	buf := new(bytes.Buffer)
+	if err = json.Indent(buf, []byte(webhook.Payload), "", "  "); err != nil {
+		ctx.Handle(500, "json.Indent", err)
+		return
+	}
+	webhook.Payload = buf.String()
+
+	ctx.HTML(200, "webhook/view")
 }

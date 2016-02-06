@@ -1,0 +1,22 @@
+{{template "base/head" .}}
+<section class="content-header">
+	<h1>
+	  Webhooks
+	</h1>
+</section>
+<section class="content">
+	<div class="row">
+	  <div class="col-xs-12">
+	  	<div class="box box-primary">
+        <div class="box-header with-border">
+          <h3 class="box-title">ID: {{.Webhook.ID}}</h3>
+        </div>
+        <div class="box-body">
+        	<h4>Payload</h4>
+        	<pre><code class="hljs">{{.Webhook.Payload}}</code></pre>
+        </div>
+      </div>
+	  </div>
+	</div>
+</section>
+{{template "base/footer" .}}
