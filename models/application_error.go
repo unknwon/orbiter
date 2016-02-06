@@ -16,27 +16,32 @@ package models
 
 import (
 	"fmt"
-	"log"
-
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
-
-	"github.com/Unknwon/orbiter/modules/setting"
 )
 
-type Engine struct {
-	*gorm.DB
+type ErrApplicationExists struct {
+	Name string
 }
 
-var x *Engine
+func IsErrApplicationExists(err error) bool {
+	_, ok := err.(ErrApplicationExists)
+	return ok
+}
 
-func init() {
-	db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true",
-		setting.Database.User, setting.Database.Password, setting.Database.Host, setting.Database.Name))
-	if err != nil {
-		log.Fatalf("Fail to open database: %s", err)
-	}
-	x = &Engine{&db}
+func (err ErrApplicationExists) Error() string {
+	return fmt.Sprintf("Application already exists: [name: %s]", err.Name)
+}
 
-	x.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(new(Collector), new(Webhook), new(Application))
+type ErrApplicationNotFound struct {
+	ID    int64
+	Name  string
+	Token string
+}
+
+func IsErrApplicationNotFound(err error) bool {
+	_, ok := err.(ErrApplicationNotFound)
+	return ok
+}
+
+func (err ErrApplicationNotFound) Error() string {
+	return fmt.Sprintf("Application not found: [id: %d, name: %s, token: %s]", err.ID, err.Name, err.Token)
 }

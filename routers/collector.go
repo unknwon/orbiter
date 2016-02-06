@@ -26,7 +26,7 @@ import (
 )
 
 func Collectors(ctx *context.Context) {
-	ctx.Data["Title"] = "Collector"
+	ctx.Data["Title"] = "Collectors"
 	ctx.Data["PageIsCollector"] = true
 
 	collectors, err := models.ListCollectors()
@@ -76,22 +76,53 @@ func NewCollectorPost(ctx *context.Context, form NewCollectorForm) {
 	ctx.Redirect(fmt.Sprintf("/collectors/%d", collector.ID))
 }
 
+func parseCollectorByID(ctx *context.Context) *models.Collector {
+	collector, err := models.GetCollectorByID(ctx.ParamsInt64(":id"))
+	if err != nil {
+		if models.IsErrCollectorNotFound(err) {
+			ctx.Handle(404, "EditApplication", nil)
+		} else {
+			ctx.Error(500, err.Error())
+		}
+		return nil
+	}
+	ctx.Data["Collector"] = collector
+	return collector
+}
+
 func EditCollector(ctx *context.Context) {
 	ctx.Data["Title"] = "Edit Collector"
 	ctx.Data["PageIsCollector"] = true
 
-	collector, err := models.GetCollectorByID(ctx.ParamsInt64(":id"))
-	if err != nil {
-		if models.IsErrCollectorNotFound(err) {
-			ctx.Handle(404, "EditCollector", nil)
+	parseCollectorByID(ctx)
+	if ctx.Written() {
+		return
+	}
+
+	ctx.HTML(200, "collector/edit")
+}
+
+func EditCollectorPost(ctx *context.Context, form NewCollectorForm) {
+	ctx.Data["Title"] = "Edit Collector"
+	ctx.Data["PageIsCollector"] = true
+
+	collector := parseCollectorByID(ctx)
+	if ctx.Written() {
+		return
+	}
+
+	collector.Name = form.Name
+	if err := models.UpdateCollector(collector); err != nil {
+		if models.IsErrCollectorExists(err) {
+			ctx.Data["Err_Name"] = true
+			ctx.RenderWithErr("Collector name has been used.", "collector/edit", form)
 		} else {
 			ctx.Error(500, err.Error())
 		}
 		return
 	}
-	ctx.Data["Collector"] = collector
 
-	ctx.HTML(200, "collector/edit")
+	ctx.Redirect(fmt.Sprintf("/collectors/%d", collector.ID))
 }
 
 func RegenerateCollectorSecret(ctx *context.Context) {

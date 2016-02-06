@@ -30,7 +30,7 @@ import (
 	"github.com/Unknwon/orbiter/routers"
 )
 
-const APP_VER = "0.2.0.0205"
+const APP_VER = "0.3.0.0206"
 
 func init() {
 	setting.AppVer = APP_VER
@@ -56,9 +56,22 @@ func main() {
 			m.Combo("/new").Get(routers.NewCollector).
 				Post(bindIgnErr(routers.NewCollectorForm{}), routers.NewCollectorPost)
 			m.Group("/:id", func() {
-				m.Combo("").Get(routers.EditCollector)
+				m.Combo("").Get(routers.EditCollector).
+					Post(bindIgnErr(routers.NewCollectorForm{}), routers.EditCollectorPost)
 				m.Post("/regenerate_token", routers.RegenerateCollectorSecret)
 				m.Post("/delete", routers.DeleteCollector)
+			})
+		})
+
+		m.Group("/applications", func() {
+			m.Get("", routers.Applications)
+			m.Combo("/new").Get(routers.NewApplication).
+				Post(bindIgnErr(routers.NewApplicationForm{}), routers.NewApplicationPost)
+			m.Group("/:id", func() {
+				m.Combo("").Get(routers.EditApplication).
+					Post(bindIgnErr(routers.NewApplicationForm{}), routers.EditApplicationPost)
+				m.Post("/regenerate_token", routers.RegenerateApplicationSecret)
+				m.Post("/delete", routers.DeleteApplication)
 			})
 		})
 

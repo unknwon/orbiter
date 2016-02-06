@@ -93,6 +93,14 @@ func RegenerateCollectorSecret(id int64) error {
 	return x.First(new(Collector), id).Update("secret", tool.NewSecretToekn()).Error
 }
 
+func UpdateCollector(collector *Collector) error {
+	if !x.Where("name = ? AND id != ?", collector.Name, collector.ID).First(new(Collector)).RecordNotFound() {
+		return ErrCollectorExists{collector.Name}
+	}
+	return x.Save(collector).Error
+}
+
+// TODO: delete webhook history
 func DeleteCollectorByID(id int64) error {
 	return x.Delete(new(Collector), id).Error
 }
