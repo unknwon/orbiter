@@ -81,7 +81,13 @@ func GetCollectorByID(id int64) (*Collector, error) {
 
 func GetCollectorBySecret(secret string) (*Collector, error) {
 	collector := new(Collector)
-	return collector, x.Where("secret = ?", secret).First(collector).Error
+	err := x.Where("secret = ?", secret).First(collector).Error
+	if err == gorm.RecordNotFound {
+		return nil, ErrCollectorNotFound{0, "", secret}
+	} else if err != nil {
+		return nil, err
+	}
+	return collector, nil
 }
 
 func ListCollectors() ([]*Collector, error) {

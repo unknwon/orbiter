@@ -34,3 +34,38 @@ func NewWebhook(webhook *Webhook) error {
 	webhook.Created = time.Now().UTC().UnixNano()
 	return x.Create(webhook).Error
 }
+
+type QueryWebhookOptions struct {
+	CollectorID int64
+	Owner       string
+	RepoName    string
+	EventType   string
+	Sender      string
+	After       int64
+	Limit       int64
+}
+
+func QueryWebhooks(opts QueryWebhookOptions) ([]*Webhook, error) {
+	db := x.Where("created > ?", opts.After)
+	if opts.CollectorID > 0 {
+		db = db.Where("collector_id = ?", opts.CollectorID)
+	}
+	if len(opts.Owner) > 0 {
+		db = db.Where("owner = ?", opts.Owner)
+	}
+	if len(opts.RepoName) > 0 {
+		db = db.Where("repo_name = ?", opts.RepoName)
+	}
+	if len(opts.EventType) > 0 {
+		db = db.Where("event_type = ?", opts.EventType)
+	}
+	if len(opts.Sender) > 0 {
+		db = db.Where("sender = ?", opts.Sender)
+	}
+	if opts.Limit > 0 {
+		db = db.Limit(opts.Limit)
+	}
+
+	webhooks := make([]*Webhook, 0, 10)
+	return webhooks, db.Find(&webhooks).Error
+}

@@ -62,14 +62,20 @@ func GetApplicationByID(id int64) (*Application, error) {
 	return app, nil
 }
 
-func GetApplicationBySecret(secret string) (*Application, error) {
-	Application := new(Application)
-	return Application, x.Where("secret = ?", secret).First(Application).Error
+func GetApplicationByToken(token string) (*Application, error) {
+	app := new(Application)
+	err := x.Where("token = ?", token).First(app).Error
+	if err == gorm.RecordNotFound {
+		return nil, ErrApplicationNotFound{0, "", token}
+	} else if err != nil {
+		return nil, err
+	}
+	return app, nil
 }
 
 func ListApplications() ([]*Application, error) {
-	Applications := make([]*Application, 0, 5)
-	return Applications, x.Order("id asc").Find(&Applications).Error
+	apps := make([]*Application, 0, 5)
+	return apps, x.Order("id asc").Find(&apps).Error
 }
 
 func RegenerateApplicationToken(id int64) error {

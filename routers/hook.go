@@ -15,22 +15,19 @@
 package routers
 
 import (
-	"strings"
-
 	"github.com/Unknwon/orbiter/models"
 	"github.com/Unknwon/orbiter/modules/context"
 	"github.com/Unknwon/orbiter/modules/webhook"
 )
 
 func Hook(ctx *context.Context) {
-	if !strings.Contains(ctx.Req.Header.Get("User-Agent"), "GitHub-Hookshot") {
-		ctx.Error(403)
-		return
-	}
-
 	collector, err := models.GetCollectorBySecret(ctx.Query("secret"))
 	if err != nil {
-		ctx.Error(500, err.Error())
+		if models.IsErrCollectorNotFound(err) {
+			ctx.Error(403)
+		} else {
+			ctx.Error(500, err.Error())
+		}
 		return
 	}
 
@@ -40,6 +37,7 @@ func Hook(ctx *context.Context) {
 		return
 	}
 
+	// NOTE: Currently only support GitHub
 	event, err := webhook.ParseGitHubEvent(payload)
 	if err != nil {
 		ctx.Error(500, err.Error())

@@ -28,9 +28,10 @@ import (
 	"github.com/Unknwon/orbiter/modules/setting"
 	"github.com/Unknwon/orbiter/modules/template"
 	"github.com/Unknwon/orbiter/routers"
+	apiv1 "github.com/Unknwon/orbiter/routers/api/v1"
 )
 
-const APP_VER = "0.3.0.0206"
+const APP_VER = "0.4.0.0206"
 
 func init() {
 	setting.AppVer = APP_VER
@@ -79,6 +80,10 @@ func main() {
 	}, context.BasicAuth())
 
 	m.Post("/hook", routers.Hook)
+
+	m.Group("/api", func() {
+		apiv1.RegisterRoutes(m)
+	})
 
 	listenAddr := fmt.Sprintf("0.0.0.0:%d", setting.HTTPPort)
 	log.Println("Listening on", listenAddr)
