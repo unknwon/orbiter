@@ -4,8 +4,10 @@ init_cmds = [
 	["go", "build"],
 	["./orbiter"]
 ]
+watch_all = true
 watch_dirs = [
-	"modules"
+	"modules",
+	"routers"
 ]
 watch_exts = [".go"]
 cmds = [
