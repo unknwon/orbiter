@@ -24,13 +24,17 @@ And nothing else, sorry!
 
 ## Installation
 
+First of all, you need to install MySQL (WHAT?!).
+
+Then, install Orbiter:
+
 ```
 go get github.com/Unknwon/orbiter
 ```
 
 Please add `-u` flag to update in the future.
 
-Then go to directory `$GOPATH/src/github.com/Unknwon/orbiter`:
+Now, go to directory `$GOPATH/src/github.com/Unknwon/orbiter`:
 
 ```sh
 $ go build
@@ -46,7 +50,7 @@ The server should start listening on `0.0.0.0:8085` by default, visit http://loc
 
 ## Quick start
 
-### Add New Collector
+### Config New Collector
 
 Collector defines what the type (currently only support GitHub) and secret token should be.
 
@@ -75,7 +79,7 @@ Application is basically nothing but contains a **access token** which is needed
 
 ## APIs
 
-**All parameters and access token is passed by URL query**
+**All parameters and access token is passed by URL query parameters.**
 
 ### List Webhooks
 
@@ -89,13 +93,13 @@ Following parameters are all optional, and combine with condition **AND**.
 
 |Name|Description|
 |----|-----------|
-|collector_id|Only list webhooks that were received by certain collector|
-|owner|Only list webhooks that belongs to certain repository owner|
-|repo_name|Only list webhooks that belongs to certain repository|
-|event_type|Only list webhooks that have certain event type|
-|sender|Only list webhooks that were triggered by someone|
-|after|Only list webhooks that received after certain time point, this value is Unix nanoseconds|
-|limit|Only list maximum number of webhooks|
+|collector_id|List webhooks that were received by certain collector|
+|owner|List webhooks that belongs to certain repository owner|
+|repo_name|List webhooks that belongs to certain repository|
+|event_type|List webhooks that have certain event type|
+|sender|List webhooks that were triggered by someone|
+|after|List webhooks that received after certain time point, this value is Unix nanoseconds|
+|limit|Maximum number of webhooks to response|
 
 ##### Example
 
