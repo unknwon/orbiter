@@ -4,7 +4,7 @@ Orbiter is a server that collects and redistributes webhooks over the network.
 
 ## Features
 
-- Receive and save webhook by time, source (GitHub, etc) and tags (repository, owner, etc).
+- Receive and save webhook by time, type (GitHub, etc) and tags (repository, owner, etc).
 - Redistribute webhook by RESTful APIs whenever and whatever it gets requested.
 - Nice admin dashboard to config and do statistics.
 

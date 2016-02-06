@@ -20,6 +20,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/go-macaron/binding"
+	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
 
 	"github.com/Unknwon/orbiter/modules/context"
@@ -28,7 +30,7 @@ import (
 	"github.com/Unknwon/orbiter/routers"
 )
 
-const APP_VER = "0.0.0.0205"
+const APP_VER = "0.1.0.0205"
 
 func init() {
 	setting.AppVer = APP_VER
@@ -41,10 +43,20 @@ func main() {
 		Funcs:      []gotmpl.FuncMap{template.Funcs},
 		IndentJSON: macaron.Env != macaron.PROD,
 	}))
+	m.Use(session.Sessioner())
 	m.Use(context.Contexter())
+
+	bindIgnErr := binding.BindIgnErr
 
 	m.Group("", func() {
 		m.Get("/", routers.Dashboard)
+
+		m.Group("/collectors", func() {
+			m.Get("", routers.Collectors)
+			m.Combo("/new").Get(routers.NewCollector).
+				Post(bindIgnErr(routers.NewCollectorForm{}), routers.NewCollectorPost)
+		})
+
 		m.Get("/config", routers.Config)
 	}, context.BasicAuth())
 

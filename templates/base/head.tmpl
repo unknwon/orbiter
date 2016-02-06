@@ -36,6 +36,9 @@
 			      <li {{if .PageIsDashboard}}class="active"{{end}}>
 			      	<a href="/"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
 			      </li>
+			      <li {{if .PageIsCollector}}class="active"{{end}}>
+			      	<a href="/collectors"><i class="fa fa-connectdevelop"></i> <span>Collectors</span></a>
+			      </li>
 			      <li {{if .PageIsConfig}}class="active"{{end}}>
 			      	<a href="/config"><i class="fa fa-cogs"></i> <span>Configuration</span></a>
 			      </li>

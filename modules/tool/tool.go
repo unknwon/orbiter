@@ -12,20 +12,23 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package template
+package tool
 
 import (
-	"html/template"
-	"time"
+	"crypto/sha1"
+	"encoding/hex"
 
-	"github.com/Unknwon/orbiter/modules/setting"
+	"github.com/satori/go.uuid"
 )
 
-var Funcs template.FuncMap = map[string]interface{}{
-	"AppVer": func() string {
-		return setting.AppVer
-	},
-	"DateFmtShort": func(t time.Time) string {
-		return t.Format("Jan 02, 2006")
-	},
+// EncodeSHA1 encodes string to SHA1 hex value.
+func EncodeSHA1(str string) string {
+	h := sha1.New()
+	h.Write([]byte(str))
+	return hex.EncodeToString(h.Sum(nil))
+}
+
+// NewSecretToekn generates and returns a random secret token based on SHA1.
+func NewSecretToekn() string {
+	return EncodeSHA1(uuid.NewV4().String())
 }

@@ -12,20 +12,27 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package template
+package models
 
 import (
-	"html/template"
-	"time"
+	"fmt"
+	"log"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/jinzhu/gorm"
 
 	"github.com/Unknwon/orbiter/modules/setting"
 )
 
-var Funcs template.FuncMap = map[string]interface{}{
-	"AppVer": func() string {
-		return setting.AppVer
-	},
-	"DateFmtShort": func(t time.Time) string {
-		return t.Format("Jan 02, 2006")
-	},
+var x *gorm.DB
+
+func init() {
+	db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true",
+		setting.Database.User, setting.Database.Password, setting.Database.Host, setting.Database.Name))
+	if err != nil {
+		log.Fatalf("Fail to open database: %s", err)
+	}
+	x = &db
+
+	x.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(new(Collector))
 }

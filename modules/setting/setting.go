@@ -31,6 +31,13 @@ var (
 		Password string
 	}
 
+	Database struct {
+		Host     string
+		Name     string
+		User     string
+		Password string
+	}
+
 	Cfg *ini.File
 )
 
@@ -50,5 +57,7 @@ func init() {
 	HTTPPort = Cfg.Section("").Key("HTTP_PORT").MustInt(8085)
 	if err = Cfg.Section("basic_auth").MapTo(&BasicAuth); err != nil {
 		log.Fatalf("Fail to map section 'basic_auth': %s", err)
+	} else if err = Cfg.Section("database").MapTo(&Database); err != nil {
+		log.Fatalf("Fail to map section 'database': %s", err)
 	}
 }

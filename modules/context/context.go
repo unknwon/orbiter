@@ -18,13 +18,40 @@ import (
 	"encoding/base64"
 	"strings"
 
+	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
 
+	"github.com/Unknwon/orbiter/modules/form"
 	"github.com/Unknwon/orbiter/modules/setting"
 )
 
 type Context struct {
 	*macaron.Context
+	Flash   *session.Flash
+	Session session.Store
+}
+
+// HasError returns true if error occurs in form validation.
+func (ctx *Context) HasError() bool {
+	hasErr, ok := ctx.Data["HasError"]
+	if !ok {
+		return false
+	}
+	ctx.Data["FlashTitle"] = "Form Validation"
+	ctx.Flash.ErrorMsg = ctx.Data["ErrorMsg"].(string)
+	ctx.Data["Flash"] = ctx.Flash
+	return hasErr.(bool)
+}
+
+// RenderWithErr used for page has form validation but need to prompt error to users.
+func (ctx *Context) RenderWithErr(msg string, tpl string, userForm interface{}) {
+	if userForm != nil {
+		form.AssignForm(userForm, ctx.Data)
+	}
+	ctx.Data["FlashTitle"] = "Form Validation"
+	ctx.Flash.ErrorMsg = msg
+	ctx.Data["Flash"] = ctx.Flash
+	ctx.HTML(200, tpl)
 }
 
 func BasicAuthDecode(encoded string) (string, string, error) {
@@ -67,9 +94,11 @@ func BasicAuth() macaron.Handler {
 }
 
 func Contexter() macaron.Handler {
-	return func(c *macaron.Context) {
+	return func(c *macaron.Context, sess session.Store, f *session.Flash) {
 		ctx := &Context{
 			Context: c,
+			Flash:   f,
+			Session: sess,
 		}
 		c.Map(ctx)
 	}
