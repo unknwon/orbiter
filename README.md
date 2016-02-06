@@ -48,7 +48,7 @@ Finally, execute `./orbiter`.
 
 The server should start listening on `0.0.0.0:8085` by default, visit http://localhost:8085.
 
-## Quick start
+## Quick Start
 
 ### Config New Collector
 
