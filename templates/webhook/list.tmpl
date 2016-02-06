@@ -1,0 +1,45 @@
+{{template "base/head" .}}
+<section class="content-header">
+	<h1>
+	  Webhooks
+	</h1>
+</section>
+<section class="content">
+	<div class="row">
+	  <div class="col-xs-12">
+	    <div class="box">
+	      <div class="box-header">
+	        <h3 class="box-title">Recent History</h3>
+	      </div>
+	      <div class="box-body table-responsive no-padding">
+	        <table class="table table-hover">
+	          <tbody>
+		          <tr>
+		            <th>ID</th>
+		            <th class="hidden-xs">Collector ID</th>
+		            <th class="hidden-xs">Owner</th>
+		            <th>Repository</th>
+		            <th>Event Type</th>
+		            <th class="hidden-sm hidden-xs">Sender</th>
+		            <th>Created</th>
+		          </tr>
+		          {{range .Webhooks}}
+			          <tr>
+			            <td>{{.ID}}</td>
+			            <td class="hidden-xs">{{.CollectorID}}</td>
+			            <td class="hidden-xs">{{.Owner}}</td>
+			            <td>{{.RepoName}}</td>
+			            <td>{{.EventType}}</td>
+			            <td class="hidden-sm hidden-xs">{{.Sender}}</td>
+			            <td class="hidden-sm hidden-xs">{{DateFmtLong .CreatedTime}}</td>
+			            <td class="visible-sm visible-xs">{{TimeFmtShort .CreatedTime}}</td>
+			          </tr>
+		          {{end}}
+	        	</tbody>
+	        </table>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</section>
+{{template "base/footer" .}}

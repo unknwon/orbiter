@@ -31,7 +31,7 @@ import (
 	apiv1 "github.com/Unknwon/orbiter/routers/api/v1"
 )
 
-const APP_VER = "0.4.0.0206"
+const APP_VER = "0.4.1.0206"
 
 func init() {
 	setting.AppVer = APP_VER
@@ -74,6 +74,10 @@ func main() {
 				m.Post("/regenerate_token", routers.RegenerateApplicationSecret)
 				m.Post("/delete", routers.DeleteApplication)
 			})
+		})
+
+		m.Group("/webhooks", func() {
+			m.Get("", routers.Webhooks)
 		})
 
 		m.Get("/config", routers.Config)

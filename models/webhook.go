@@ -30,6 +30,10 @@ type Webhook struct {
 	Created     int64
 }
 
+func (w *Webhook) CreatedTime() time.Time {
+	return time.Unix(0, w.Created)
+}
+
 func NewWebhook(webhook *Webhook) error {
 	webhook.Created = time.Now().UTC().UnixNano()
 	return x.Create(webhook).Error
@@ -43,6 +47,7 @@ type QueryWebhookOptions struct {
 	Sender      string
 	After       int64
 	Limit       int64
+	Order       string
 }
 
 func QueryWebhooks(opts QueryWebhookOptions) ([]*Webhook, error) {
@@ -64,6 +69,9 @@ func QueryWebhooks(opts QueryWebhookOptions) ([]*Webhook, error) {
 	}
 	if opts.Limit > 0 {
 		db = db.Limit(opts.Limit)
+	}
+	if len(opts.Order) > 0 {
+		db = db.Order(opts.Order)
 	}
 
 	webhooks := make([]*Webhook, 0, 10)

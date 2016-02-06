@@ -42,6 +42,9 @@
 			      <li {{if .PageIsApplication}}class="active"{{end}}>
 			      	<a href="/applications"><i class="fa fa-cubes"></i> <span>Applications</span></a>
 			      </li>
+			      <li {{if .PageIsWebhook}}class="active"{{end}}>
+			      	<a href="/webhooks"><i class="fa fa-mixcloud"></i> <span>Webhooks</span></a>
+			      </li>
 			      <li {{if .PageIsConfig}}class="active"{{end}}>
 			      	<a href="/config"><i class="fa fa-cogs"></i> <span>Configuration</span></a>
 			      </li>

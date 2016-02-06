@@ -12,26 +12,26 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package template
+package routers
 
 import (
-	"html/template"
-	"time"
-
-	"github.com/Unknwon/orbiter/modules/setting"
+	"github.com/Unknwon/orbiter/models"
+	"github.com/Unknwon/orbiter/modules/context"
 )
 
-var Funcs template.FuncMap = map[string]interface{}{
-	"AppVer": func() string {
-		return setting.AppVer
-	},
-	"DateFmtShort": func(t time.Time) string {
-		return t.Format("Jan 02, 2006")
-	},
-	"DateFmtLong": func(t time.Time) string {
-		return t.Format(time.RFC1123Z)
-	},
-	"TimeFmtShort": func(t time.Time) string {
-		return t.Format("15:04:05")
-	},
+func Webhooks(ctx *context.Context) {
+	ctx.Data["Title"] = "Webhooks"
+	ctx.Data["PageIsWebhook"] = true
+
+	webhooks, err := models.QueryWebhooks(models.QueryWebhookOptions{
+		Limit: 50,
+		Order: "created desc",
+	})
+	if err != nil {
+		ctx.Error(500, err.Error())
+		return
+	}
+	ctx.Data["Webhooks"] = webhooks
+
+	ctx.HTML(200, "webhook/list")
 }
