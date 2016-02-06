@@ -12,31 +12,27 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package models
+package webhook
 
 import (
-	"fmt"
-	"log"
-
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
-
-	"github.com/Unknwon/orbiter/modules/setting"
+	"encoding/json"
 )
 
-type Engine struct {
-	*gorm.DB
+type GitHubUser struct {
+	Login string `json:"login"`
 }
 
-var x *Engine
+type GitHubRepository struct {
+	Name  string      `json:"name"`
+	Owner *GitHubUser `json:"owner"`
+}
 
-func init() {
-	db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true",
-		setting.Database.User, setting.Database.Password, setting.Database.Host, setting.Database.Name))
-	if err != nil {
-		log.Fatalf("Fail to open database: %s", err)
-	}
-	x = &Engine{&db}
+type GitHubEvent struct {
+	Repository *GitHubRepository `json:"repository"`
+	Sender     *GitHubUser       `json:"sender"`
+}
 
-	x.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(new(Collector), new(Webhook))
+func ParseGitHubEvent(payload []byte) (*GitHubEvent, error) {
+	event := new(GitHubEvent)
+	return event, json.Unmarshal(payload, event)
 }

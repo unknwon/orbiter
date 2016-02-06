@@ -30,7 +30,7 @@ import (
 	"github.com/Unknwon/orbiter/routers"
 )
 
-const APP_VER = "0.1.0.0205"
+const APP_VER = "0.2.0.0205"
 
 func init() {
 	setting.AppVer = APP_VER
@@ -55,10 +55,17 @@ func main() {
 			m.Get("", routers.Collectors)
 			m.Combo("/new").Get(routers.NewCollector).
 				Post(bindIgnErr(routers.NewCollectorForm{}), routers.NewCollectorPost)
+			m.Group("/:id", func() {
+				m.Combo("").Get(routers.EditCollector)
+				m.Post("/regenerate_token", routers.RegenerateCollectorSecret)
+				m.Post("/delete", routers.DeleteCollector)
+			})
 		})
 
 		m.Get("/config", routers.Config)
 	}, context.BasicAuth())
+
+	m.Post("/hook", routers.Hook)
 
 	listenAddr := fmt.Sprintf("0.0.0.0:%d", setting.HTTPPort)
 	log.Println("Listening on", listenAddr)

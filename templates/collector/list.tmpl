@@ -21,9 +21,9 @@
 		            <th>ID</th>
 		            <th>Name</th>
 		            <th class="hidden-xs">Type</th>
-		            <th class="hidden-sm hidden-xs">Secret</th>
+		            <th class="hidden-sm hidden-xs">Secret Token</th>
 		            <th class="hidden-xs">Created</th>
-		            <!-- <th width="50px">Op.</th> -->
+		            <th width="50px">Op.</th>
 		          </tr>
 		          {{range .Collectors}}
 			          <tr>
@@ -32,7 +32,7 @@
 			            <td class="hidden-xs">{{.Type}}</td>
 			            <td class="hidden-sm hidden-xs">{{.Secret}}</td>
 			            <td class="hidden-xs">{{DateFmtShort .CreatedTime}}</td>
-			            <!-- <td><a href="/collectors/{{.ID}}"><i class="fa fa-pencil"></i></a></td> -->
+			            <td><a href="/collectors/{{.ID}}"><i class="fa fa-pencil"></i></a></td>
 			          </tr>
 		          {{end}}
 	        	</tbody>

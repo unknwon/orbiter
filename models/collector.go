@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/Unknwon/com"
+	"github.com/jinzhu/gorm"
 
 	"github.com/Unknwon/orbiter/modules/tool"
 )
@@ -50,19 +51,6 @@ func (c *Collector) CreatedTime() time.Time {
 	return time.Unix(0, c.Created)
 }
 
-type ErrCollectorExists struct {
-	Name string
-}
-
-func IsErrCollectorExists(err error) bool {
-	_, ok := err.(ErrCollectorExists)
-	return ok
-}
-
-func (err ErrCollectorExists) Error() string {
-	return fmt.Sprintf("Collector already exists: [name: %s]", err.Name)
-}
-
 func NewCollector(name string, tp CollectType) (*Collector, error) {
 	if !x.Where("name = ?", name).First(new(Collector)).RecordNotFound() {
 		return nil, ErrCollectorExists{name}
@@ -80,7 +68,31 @@ func NewCollector(name string, tp CollectType) (*Collector, error) {
 	return collector, nil
 }
 
+func GetCollectorByID(id int64) (*Collector, error) {
+	collector := new(Collector)
+	err := x.First(collector, id).Error
+	if err == gorm.RecordNotFound {
+		return nil, ErrCollectorNotFound{id, "", ""}
+	} else if err != nil {
+		return nil, err
+	}
+	return collector, nil
+}
+
+func GetCollectorBySecret(secret string) (*Collector, error) {
+	collector := new(Collector)
+	return collector, x.Where("secret = ?", secret).First(collector).Error
+}
+
 func ListCollectors() ([]*Collector, error) {
 	collectors := make([]*Collector, 0, 5)
 	return collectors, x.Order("id asc").Find(&collectors).Error
+}
+
+func RegenerateCollectorSecret(id int64) error {
+	return x.First(new(Collector), id).Update("secret", tool.NewSecretToekn()).Error
+}
+
+func DeleteCollectorByID(id int64) error {
+	return x.Delete(new(Collector), id).Error
 }

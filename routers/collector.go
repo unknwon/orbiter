@@ -15,6 +15,8 @@
 package routers
 
 import (
+	"fmt"
+
 	"github.com/go-macaron/binding"
 	"gopkg.in/macaron.v1"
 
@@ -60,7 +62,7 @@ func NewCollectorPost(ctx *context.Context, form NewCollectorForm) {
 		return
 	}
 
-	_, err := models.NewCollector(form.Name, models.COLLECT_TYPE_GITHUB)
+	collector, err := models.NewCollector(form.Name, models.COLLECT_TYPE_GITHUB)
 	if err != nil {
 		if models.IsErrCollectorExists(err) {
 			ctx.Data["Err_Name"] = true
@@ -68,6 +70,42 @@ func NewCollectorPost(ctx *context.Context, form NewCollectorForm) {
 		} else {
 			ctx.Error(500, err.Error())
 		}
+		return
+	}
+
+	ctx.Redirect(fmt.Sprintf("/collectors/%d", collector.ID))
+}
+
+func EditCollector(ctx *context.Context) {
+	ctx.Data["Title"] = "Edit Collector"
+	ctx.Data["PageIsCollector"] = true
+
+	collector, err := models.GetCollectorByID(ctx.ParamsInt64(":id"))
+	if err != nil {
+		if models.IsErrCollectorNotFound(err) {
+			ctx.Handle(404, "EditCollector", nil)
+		} else {
+			ctx.Error(500, err.Error())
+		}
+		return
+	}
+	ctx.Data["Collector"] = collector
+
+	ctx.HTML(200, "collector/edit")
+}
+
+func RegenerateCollectorSecret(ctx *context.Context) {
+	if err := models.RegenerateCollectorSecret(ctx.ParamsInt64(":id")); err != nil {
+		ctx.Error(500, err.Error())
+		return
+	}
+
+	ctx.Redirect(fmt.Sprintf("/collectors/%d", ctx.ParamsInt64(":id")))
+}
+
+func DeleteCollector(ctx *context.Context) {
+	if err := models.DeleteCollectorByID(ctx.ParamsInt64(":id")); err != nil {
+		ctx.Error(500, err.Error())
 		return
 	}
 

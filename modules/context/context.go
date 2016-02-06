@@ -16,6 +16,8 @@ package context
 
 import (
 	"encoding/base64"
+	"fmt"
+	"log"
 	"strings"
 
 	"github.com/go-macaron/session"
@@ -52,6 +54,24 @@ func (ctx *Context) RenderWithErr(msg string, tpl string, userForm interface{}) 
 	ctx.Flash.ErrorMsg = msg
 	ctx.Data["Flash"] = ctx.Flash
 	ctx.HTML(200, tpl)
+}
+
+// Handle handles and logs error by given status.
+func (ctx *Context) Handle(status int, title string, err error) {
+	if err != nil {
+		log.Printf("%s: %v", title, err)
+		if macaron.Env != macaron.PROD {
+			ctx.Data["ErrorMsg"] = err
+		}
+	}
+
+	switch status {
+	case 404:
+		ctx.Data["Title"] = "Page Not Found"
+	case 500:
+		ctx.Data["Title"] = "Internal Server Error"
+	}
+	ctx.HTML(status, fmt.Sprintf("status/%d", status))
 }
 
 func BasicAuthDecode(encoded string) (string, string, error) {

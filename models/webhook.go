@@ -15,28 +15,22 @@
 package models
 
 import (
-	"fmt"
-	"log"
-
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jinzhu/gorm"
-
-	"github.com/Unknwon/orbiter/modules/setting"
+	"time"
 )
 
-type Engine struct {
-	*gorm.DB
+// Webhook represents a history record of webhook.
+type Webhook struct {
+	ID          int64
+	CollectorID int64 `sql:"index"`
+	Owner       string
+	RepoName    string
+	EventType   string
+	Sender      string
+	Payload     string `sql:"type:text"`
+	Created     int64
 }
 
-var x *Engine
-
-func init() {
-	db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true",
-		setting.Database.User, setting.Database.Password, setting.Database.Host, setting.Database.Name))
-	if err != nil {
-		log.Fatalf("Fail to open database: %s", err)
-	}
-	x = &Engine{&db}
-
-	x.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(new(Collector), new(Webhook))
+func NewWebhook(webhook *Webhook) error {
+	webhook.Created = time.Now().UTC().UnixNano()
+	return x.Create(webhook).Error
 }
