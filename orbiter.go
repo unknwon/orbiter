@@ -32,7 +32,7 @@ import (
 	apiv1 "github.com/Unknwon/orbiter/routers/api/v1"
 )
 
-const APP_VER = "0.5.1.0206"
+const APP_VER = "0.5.2.0206"
 
 func init() {
 	setting.AppVer = APP_VER

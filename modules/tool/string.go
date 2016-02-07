@@ -12,29 +12,16 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package webhook
+package tool
 
-import (
-	"encoding/json"
-)
-
-type GitHubUser struct {
-	// Sometimes we have 'login', other times we have 'name'.
-	Login string `json:"login"`
-	Name  string `json:"name"`
-}
-
-type GitHubRepository struct {
-	Name  string      `json:"name"`
-	Owner *GitHubUser `json:"owner"`
-}
-
-type GitHubEvent struct {
-	Repository *GitHubRepository `json:"repository"`
-	Sender     *GitHubUser       `json:"sender"`
-}
-
-func ParseGitHubEvent(payload []byte) (*GitHubEvent, error) {
-	event := new(GitHubEvent)
-	return event, json.Unmarshal(payload, event)
+// FirstNonEmptyString returns the value of first string
+// that is not empty in the list.
+// If all strings are empty, it returns an empty result.
+func FirstNonEmptyString(strs ...string) string {
+	for i := range strs {
+		if len(strs[i]) > 0 {
+			return strs[i]
+		}
+	}
+	return ""
 }

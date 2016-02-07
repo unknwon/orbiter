@@ -17,6 +17,7 @@ package routers
 import (
 	"github.com/Unknwon/orbiter/models"
 	"github.com/Unknwon/orbiter/modules/context"
+	"github.com/Unknwon/orbiter/modules/tool"
 	"github.com/Unknwon/orbiter/modules/webhook"
 )
 
@@ -46,7 +47,7 @@ func Hook(ctx *context.Context) {
 
 	if err = models.NewWebhook(&models.Webhook{
 		CollectorID: collector.ID,
-		Owner:       event.Repository.Owner.Login,
+		Owner:       tool.FirstNonEmptyString(event.Repository.Owner.Login, event.Repository.Owner.Name),
 		RepoName:    event.Repository.Name,
 		EventType:   ctx.Req.Header.Get("X-GitHub-Event"),
 		Sender:      event.Sender.Login,
