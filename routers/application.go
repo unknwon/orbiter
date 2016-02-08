@@ -31,7 +31,7 @@ func Applications(ctx *context.Context) {
 
 	apps, err := models.ListApplications()
 	if err != nil {
-		ctx.Error(500, err.Error())
+		ctx.Handle(500, "ListApplications", err)
 		return
 	}
 	ctx.Data["Applications"] = apps
@@ -68,7 +68,7 @@ func NewApplicationPost(ctx *context.Context, form NewApplicationForm) {
 			ctx.Data["Err_Name"] = true
 			ctx.RenderWithErr("Application name has been used.", "application/new", form)
 		} else {
-			ctx.Error(500, err.Error())
+			ctx.Handle(500, "NewApplication", err)
 		}
 		return
 	}
@@ -82,7 +82,7 @@ func parseApplicationByID(ctx *context.Context) *models.Application {
 		if models.IsErrApplicationNotFound(err) {
 			ctx.Handle(404, "EditApplication", nil)
 		} else {
-			ctx.Error(500, err.Error())
+			ctx.Handle(500, "GetApplicationByID", err)
 		}
 		return nil
 	}

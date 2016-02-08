@@ -68,7 +68,7 @@ func NewCollectorPost(ctx *context.Context, form NewCollectorForm) {
 			ctx.Data["Err_Name"] = true
 			ctx.RenderWithErr("Collector name has been used.", "collector/new", form)
 		} else {
-			ctx.Error(500, err.Error())
+			ctx.Handle(500, "NewCollector", err)
 		}
 		return
 	}
@@ -82,7 +82,7 @@ func parseCollectorByID(ctx *context.Context) *models.Collector {
 		if models.IsErrCollectorNotFound(err) {
 			ctx.Handle(404, "EditApplication", nil)
 		} else {
-			ctx.Error(500, err.Error())
+			ctx.Handle(500, "GetCollectorByID", err)
 		}
 		return nil
 	}
