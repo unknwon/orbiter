@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 
 	"github.com/Unknwon/orbiter/models"
+	"github.com/Unknwon/orbiter/models/errors"
 	"github.com/Unknwon/orbiter/modules/context"
 )
 
@@ -46,7 +47,7 @@ func ViewWebhook(ctx *context.Context) {
 
 	webhook, err := models.GetWebhookByID(ctx.ParamsInt64(":id"))
 	if err != nil {
-		if models.IsErrWebhookNotFound(err) {
+		if errors.IsWebhookNotFound(err) {
 			ctx.Handle(404, "GetWebhookByID", nil)
 		} else {
 			ctx.Handle(500, "GetWebhookByID", err)

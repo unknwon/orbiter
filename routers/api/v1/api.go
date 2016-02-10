@@ -19,6 +19,7 @@ import (
 	"gopkg.in/macaron.v1"
 
 	"github.com/Unknwon/orbiter/models"
+	"github.com/Unknwon/orbiter/models/errors"
 	"github.com/Unknwon/orbiter/modules/context"
 )
 
@@ -31,7 +32,7 @@ func Contexter() macaron.Handler {
 	return func(c *context.Context) {
 		app, err := models.GetApplicationByToken(c.Query("token"))
 		if err != nil {
-			if models.IsErrApplicationExists(err) {
+			if errors.IsApplicationExists(err) {
 				c.Error(403)
 			} else {
 				c.Error(500, err.Error())

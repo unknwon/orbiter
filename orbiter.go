@@ -17,10 +17,9 @@ package main
 
 import (
 	"fmt"
-	gotmpl "html/template"
-	"log"
 	"net/http"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/go-macaron/binding"
 	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
@@ -32,7 +31,7 @@ import (
 	apiv1 "github.com/Unknwon/orbiter/routers/api/v1"
 )
 
-const APP_VER = "0.5.2.0206"
+const APP_VER = "0.5.4.0210"
 
 func init() {
 	setting.AppVer = APP_VER
@@ -42,7 +41,7 @@ func main() {
 	log.Printf("Orbiter %s", APP_VER)
 	m := macaron.Classic()
 	m.Use(macaron.Renderer(macaron.RenderOptions{
-		Funcs:      []gotmpl.FuncMap{template.Funcs},
+		Funcs:      template.NewFuncMap(),
 		IndentJSON: macaron.Env != macaron.PROD,
 	}))
 	m.Use(session.Sessioner())

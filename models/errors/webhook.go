@@ -12,36 +12,21 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package models
+package errors
 
 import (
 	"fmt"
 )
 
-type ErrApplicationExists struct {
-	Name string
+type WebhookNotFound struct {
+	ID int64
 }
 
-func IsErrApplicationExists(err error) bool {
-	_, ok := err.(ErrApplicationExists)
+func IsWebhookNotFound(err error) bool {
+	_, ok := err.(WebhookNotFound)
 	return ok
 }
 
-func (err ErrApplicationExists) Error() string {
-	return fmt.Sprintf("Application already exists: [name: %s]", err.Name)
-}
-
-type ErrApplicationNotFound struct {
-	ID    int64
-	Name  string
-	Token string
-}
-
-func IsErrApplicationNotFound(err error) bool {
-	_, ok := err.(ErrApplicationNotFound)
-	return ok
-}
-
-func (err ErrApplicationNotFound) Error() string {
-	return fmt.Sprintf("Application not found: [id: %d, name: %s, token: %s]", err.ID, err.Name, err.Token)
+func (err WebhookNotFound) Error() string {
+	return fmt.Sprintf("Webhook not found: [id: %d]", err.ID)
 }

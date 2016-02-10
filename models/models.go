@@ -16,8 +16,8 @@ package models
 
 import (
 	"fmt"
-	"log"
 
+	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
 

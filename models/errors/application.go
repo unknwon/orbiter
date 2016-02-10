@@ -12,36 +12,36 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package models
+package errors
 
 import (
 	"fmt"
 )
 
-type ErrCollectorExists struct {
+type ApplicationExists struct {
 	Name string
 }
 
-func IsErrCollectorExists(err error) bool {
-	_, ok := err.(ErrCollectorExists)
+func IsApplicationExists(err error) bool {
+	_, ok := err.(ApplicationExists)
 	return ok
 }
 
-func (err ErrCollectorExists) Error() string {
-	return fmt.Sprintf("Collector already exists: [name: %s]", err.Name)
+func (err ApplicationExists) Error() string {
+	return fmt.Sprintf("Application already exists: [name: %s]", err.Name)
 }
 
-type ErrCollectorNotFound struct {
-	ID     int64
-	Name   string
-	Secret string
+type ApplicationNotFound struct {
+	ID    int64
+	Name  string
+	Token string
 }
 
-func IsErrCollectorNotFound(err error) bool {
-	_, ok := err.(ErrCollectorNotFound)
+func IsApplicationNotFound(err error) bool {
+	_, ok := err.(ApplicationNotFound)
 	return ok
 }
 
-func (err ErrCollectorNotFound) Error() string {
-	return fmt.Sprintf("Collector not found: [id: %d, name: %s, secret: %s]", err.ID, err.Name, err.Secret)
+func (err ApplicationNotFound) Error() string {
+	return fmt.Sprintf("Application not found: [id: %d, name: %s, token: %s]", err.ID, err.Name, err.Token)
 }

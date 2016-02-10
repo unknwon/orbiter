@@ -21,6 +21,7 @@ import (
 	"gopkg.in/macaron.v1"
 
 	"github.com/Unknwon/orbiter/models"
+	"github.com/Unknwon/orbiter/models/errors"
 	"github.com/Unknwon/orbiter/modules/context"
 	"github.com/Unknwon/orbiter/modules/form"
 )
@@ -64,7 +65,7 @@ func NewApplicationPost(ctx *context.Context, form NewApplicationForm) {
 
 	app, err := models.NewApplication(form.Name)
 	if err != nil {
-		if models.IsErrApplicationExists(err) {
+		if errors.IsApplicationExists(err) {
 			ctx.Data["Err_Name"] = true
 			ctx.RenderWithErr("Application name has been used.", "application/new", form)
 		} else {
@@ -79,7 +80,7 @@ func NewApplicationPost(ctx *context.Context, form NewApplicationForm) {
 func parseApplicationByID(ctx *context.Context) *models.Application {
 	app, err := models.GetApplicationByID(ctx.ParamsInt64(":id"))
 	if err != nil {
-		if models.IsErrApplicationNotFound(err) {
+		if errors.IsApplicationNotFound(err) {
 			ctx.Handle(404, "EditApplication", nil)
 		} else {
 			ctx.Handle(500, "GetApplicationByID", err)
@@ -113,7 +114,7 @@ func EditApplicationPost(ctx *context.Context, form NewApplicationForm) {
 
 	app.Name = form.Name
 	if err := models.UpdateApplication(app); err != nil {
-		if models.IsErrApplicationExists(err) {
+		if errors.IsApplicationExists(err) {
 			ctx.Data["Err_Name"] = true
 			ctx.RenderWithErr("Application name has been used.", "application/edit", form)
 		} else {

@@ -21,6 +21,7 @@ import (
 	"gopkg.in/macaron.v1"
 
 	"github.com/Unknwon/orbiter/models"
+	"github.com/Unknwon/orbiter/models/errors"
 	"github.com/Unknwon/orbiter/modules/context"
 	"github.com/Unknwon/orbiter/modules/form"
 )
@@ -64,7 +65,7 @@ func NewCollectorPost(ctx *context.Context, form NewCollectorForm) {
 
 	collector, err := models.NewCollector(form.Name, models.COLLECT_TYPE_GITHUB)
 	if err != nil {
-		if models.IsErrCollectorExists(err) {
+		if errors.IsCollectorExists(err) {
 			ctx.Data["Err_Name"] = true
 			ctx.RenderWithErr("Collector name has been used.", "collector/new", form)
 		} else {
@@ -79,7 +80,7 @@ func NewCollectorPost(ctx *context.Context, form NewCollectorForm) {
 func parseCollectorByID(ctx *context.Context) *models.Collector {
 	collector, err := models.GetCollectorByID(ctx.ParamsInt64(":id"))
 	if err != nil {
-		if models.IsErrCollectorNotFound(err) {
+		if errors.IsCollectorNotFound(err) {
 			ctx.Handle(404, "EditApplication", nil)
 		} else {
 			ctx.Handle(500, "GetCollectorByID", err)
@@ -113,7 +114,7 @@ func EditCollectorPost(ctx *context.Context, form NewCollectorForm) {
 
 	collector.Name = form.Name
 	if err := models.UpdateCollector(collector); err != nil {
-		if models.IsErrCollectorExists(err) {
+		if errors.IsCollectorExists(err) {
 			ctx.Data["Err_Name"] = true
 			ctx.RenderWithErr("Collector name has been used.", "collector/edit", form)
 		} else {

@@ -20,6 +20,7 @@ import (
 
 	"github.com/Unknwon/com"
 
+	"github.com/Unknwon/orbiter/models/errors"
 	"github.com/Unknwon/orbiter/modules/tool"
 )
 
@@ -52,7 +53,7 @@ func (c *Collector) CreatedTime() time.Time {
 
 func NewCollector(name string, tp CollectType) (*Collector, error) {
 	if !x.Where("name = ?", name).First(new(Collector)).RecordNotFound() {
-		return nil, ErrCollectorExists{name}
+		return nil, errors.CollectorExists{name}
 	}
 
 	collector := &Collector{
@@ -71,7 +72,7 @@ func GetCollectorByID(id int64) (*Collector, error) {
 	collector := new(Collector)
 	err := x.First(collector, id).Error
 	if IsRecordNotFound(err) {
-		return nil, ErrCollectorNotFound{id, "", ""}
+		return nil, errors.CollectorNotFound{id, "", ""}
 	} else if err != nil {
 		return nil, err
 	}
@@ -82,7 +83,7 @@ func GetCollectorBySecret(secret string) (*Collector, error) {
 	collector := new(Collector)
 	err := x.Where("secret = ?", secret).First(collector).Error
 	if IsRecordNotFound(err) {
-		return nil, ErrCollectorNotFound{0, "", secret}
+		return nil, errors.CollectorNotFound{0, "", secret}
 	} else if err != nil {
 		return nil, err
 	}
@@ -100,7 +101,7 @@ func RegenerateCollectorSecret(id int64) error {
 
 func UpdateCollector(collector *Collector) error {
 	if !x.Where("name = ? AND id != ?", collector.Name, collector.ID).First(new(Collector)).RecordNotFound() {
-		return ErrCollectorExists{collector.Name}
+		return errors.CollectorExists{collector.Name}
 	}
 	return x.Save(collector).Error
 }

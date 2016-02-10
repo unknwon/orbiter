@@ -17,9 +17,9 @@ package context
 import (
 	"encoding/base64"
 	"fmt"
-	"log"
 	"strings"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
 

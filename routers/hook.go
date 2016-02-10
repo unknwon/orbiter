@@ -16,6 +16,7 @@ package routers
 
 import (
 	"github.com/Unknwon/orbiter/models"
+	"github.com/Unknwon/orbiter/models/errors"
 	"github.com/Unknwon/orbiter/modules/context"
 	"github.com/Unknwon/orbiter/modules/tool"
 	"github.com/Unknwon/orbiter/modules/webhook"
@@ -24,7 +25,7 @@ import (
 func Hook(ctx *context.Context) {
 	collector, err := models.GetCollectorBySecret(ctx.Query("secret"))
 	if err != nil {
-		if models.IsErrCollectorNotFound(err) {
+		if errors.IsCollectorNotFound(err) {
 			ctx.Error(403)
 		} else {
 			ctx.Error(500, err.Error())

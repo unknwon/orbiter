@@ -12,21 +12,36 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package models
+package errors
 
 import (
 	"fmt"
 )
 
-type ErrWebhookNotFound struct {
-	ID int64
+type CollectorExists struct {
+	Name string
 }
 
-func IsErrWebhookNotFound(err error) bool {
-	_, ok := err.(ErrWebhookNotFound)
+func IsCollectorExists(err error) bool {
+	_, ok := err.(CollectorExists)
 	return ok
 }
 
-func (err ErrWebhookNotFound) Error() string {
-	return fmt.Sprintf("Webhook not found: [id: %d]", err.ID)
+func (err CollectorExists) Error() string {
+	return fmt.Sprintf("Collector already exists: [name: %s]", err.Name)
+}
+
+type CollectorNotFound struct {
+	ID     int64
+	Name   string
+	Secret string
+}
+
+func IsCollectorNotFound(err error) bool {
+	_, ok := err.(CollectorNotFound)
+	return ok
+}
+
+func (err CollectorNotFound) Error() string {
+	return fmt.Sprintf("Collector not found: [id: %d, name: %s, secret: %s]", err.ID, err.Name, err.Secret)
 }

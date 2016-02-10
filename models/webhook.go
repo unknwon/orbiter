@@ -15,8 +15,11 @@
 package models
 
 import (
-	"log"
 	"time"
+
+	log "github.com/Sirupsen/logrus"
+
+	"github.com/Unknwon/orbiter/models/errors"
 )
 
 // Webhook represents a history record of webhook.
@@ -44,7 +47,7 @@ func GetWebhookByID(id int64) (*Webhook, error) {
 	webhook := new(Webhook)
 	err := x.First(webhook, id).Error
 	if IsRecordNotFound(err) {
-		return nil, ErrWebhookNotFound{id}
+		return nil, errors.WebhookNotFound{id}
 	} else if err != nil {
 		return nil, err
 	}

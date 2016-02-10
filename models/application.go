@@ -18,6 +18,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Unknwon/orbiter/models/errors"
 	"github.com/Unknwon/orbiter/modules/tool"
 )
 
@@ -35,7 +36,7 @@ func (app *Application) CreatedTime() time.Time {
 
 func NewApplication(name string) (*Application, error) {
 	if !x.Where("name = ?", name).First(new(Application)).RecordNotFound() {
-		return nil, ErrApplicationExists{name}
+		return nil, errors.ApplicationExists{name}
 	}
 
 	app := &Application{
@@ -53,7 +54,7 @@ func GetApplicationByID(id int64) (*Application, error) {
 	app := new(Application)
 	err := x.First(app, id).Error
 	if IsRecordNotFound(err) {
-		return nil, ErrApplicationNotFound{id, "", ""}
+		return nil, errors.ApplicationNotFound{id, "", ""}
 	} else if err != nil {
 		return nil, err
 	}
@@ -64,7 +65,7 @@ func GetApplicationByToken(token string) (*Application, error) {
 	app := new(Application)
 	err := x.Where("token = ?", token).First(app).Error
 	if IsRecordNotFound(err) {
-		return nil, ErrApplicationNotFound{0, "", token}
+		return nil, errors.ApplicationNotFound{0, "", token}
 	} else if err != nil {
 		return nil, err
 	}
@@ -82,7 +83,7 @@ func RegenerateApplicationToken(id int64) error {
 
 func UpdateApplication(app *Application) error {
 	if !x.Where("name = ? AND id != ?", app.Name, app.ID).First(new(Application)).RecordNotFound() {
-		return ErrApplicationExists{app.Name}
+		return errors.ApplicationExists{app.Name}
 	}
 	return x.Save(app).Error
 }
