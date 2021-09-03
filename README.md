@@ -28,16 +28,8 @@ First of all, you need to install MySQL (WHAT?!).
 
 Then, install Orbiter:
 
-```
-go get unknwon.dev/orbiter
-```
-
-Please add `-u` flag to update in the future.
-
-Now, go to directory `$GOPATH/src/unknwon.dev/orbiter`:
-
 ```sh
-$ go build
+$ go get unknwon.dev/orbiter
 ```
 
 ### Configuration
@@ -48,9 +40,9 @@ Finally, execute `./orbiter`.
 
 The server should start listening on `0.0.0.0:8085` by default, visit http://localhost:8085.
 
-## Quick Start
+## Quick start
 
-### Config New Collector
+### Config new collector
 
 Collector defines what the type (currently only support GitHub) and secret token should be.
 
@@ -67,13 +59,13 @@ For example, in GitHub:
 - `Secret`: **REMAIN EMPTY**
 - Events: **ORBITER DOES NOT CARE**
 
-### View Recent History
+### View recent history
 
 You can go to `/webhooks` to view recent receive history of webhooks, and their payloads.
 
 Important tags such as **repository owner**, **repository name**, **event type** and **sender** are extracted for payload automatically and can be used as query conditions for applications.
 
-### Add New Application
+### Add new application
 
 Application is basically nothing but contains a **access token** which is needed for calling APIs.
 
@@ -81,7 +73,7 @@ Application is basically nothing but contains a **access token** which is needed
 
 **All parameters and access token is passed by URL query parameters.**
 
-### List Webhooks
+### List webhooks
 
 ```
 GET /api/v1/webhooks
