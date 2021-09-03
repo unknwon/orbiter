@@ -18,9 +18,9 @@ import (
 	"github.com/go-macaron/binding"
 	"gopkg.in/macaron.v1"
 
-	"unknwon.dev/orbiter/models"
-	"unknwon.dev/orbiter/models/errors"
-	"unknwon.dev/orbiter/modules/context"
+	"unknwon.dev/orbiter/internal/context"
+	"unknwon.dev/orbiter/internal/models"
+	"unknwon.dev/orbiter/internal/models/errors"
 )
 
 type Context struct {

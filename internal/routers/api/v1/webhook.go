@@ -12,23 +12,26 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package tool
+package v1
 
 import (
-	"crypto/sha1"
-	"encoding/hex"
-
-	"github.com/satori/go.uuid"
+	"unknwon.dev/orbiter/internal/models"
 )
 
-// EncodeSHA1 encodes string to SHA1 hex value.
-func EncodeSHA1(str string) string {
-	h := sha1.New()
-	h.Write([]byte(str))
-	return hex.EncodeToString(h.Sum(nil))
-}
+func ListWebhooks(ctx *Context) {
+	webhooks, err := models.QueryWebhooks(models.QueryWebhookOptions{
+		CollectorID: ctx.QueryInt64("collector_id"),
+		Owner:       ctx.Query("owner"),
+		RepoName:    ctx.Query("repo_name"),
+		EventType:   ctx.Query("event_type"),
+		Sender:      ctx.Query("sender"),
+		After:       ctx.QueryInt64("after"),
+		Limit:       ctx.QueryInt64("limit"),
+	})
+	if err != nil {
+		ctx.Error(500, err.Error())
+		return
+	}
 
-// NewSecretToekn generates and returns a random secret token based on SHA1.
-func NewSecretToekn() string {
-	return EncodeSHA1(uuid.NewV4().String())
+	ctx.JSON(200, webhooks)
 }

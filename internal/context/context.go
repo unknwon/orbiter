@@ -23,8 +23,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/macaron.v1"
 
-	"unknwon.dev/orbiter/modules/form"
-	"unknwon.dev/orbiter/modules/setting"
+	"unknwon.dev/orbiter/internal/form"
+	"unknwon.dev/orbiter/internal/setting"
 )
 
 type Context struct {

@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"time"
 
-	"unknwon.dev/orbiter/models/errors"
-	"unknwon.dev/orbiter/modules/tool"
+	"unknwon.dev/orbiter/internal/models/errors"
+	"unknwon.dev/orbiter/internal/tool"
 )
 
 // Application represents a consumer application that calls APIs.
@@ -41,7 +41,7 @@ func NewApplication(name string) (*Application, error) {
 
 	app := &Application{
 		Name:    name,
-		Token:   tool.NewSecretToekn(),
+		Token:   tool.NewSecretToken(),
 		Created: time.Now().UTC().UnixNano(),
 	}
 	if err := x.Create(app).Error; err != nil {
@@ -78,7 +78,7 @@ func ListApplications() ([]*Application, error) {
 }
 
 func RegenerateApplicationToken(id int64) error {
-	return x.First(new(Application), id).Update("token", tool.NewSecretToekn()).Error
+	return x.First(new(Application), id).Update("token", tool.NewSecretToken()).Error
 }
 
 func UpdateApplication(app *Application) error {

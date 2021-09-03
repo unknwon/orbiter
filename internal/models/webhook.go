@@ -19,7 +19,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"unknwon.dev/orbiter/models/errors"
+	"unknwon.dev/orbiter/internal/models/errors"
 )
 
 // Webhook represents a history record of webhook.

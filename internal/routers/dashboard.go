@@ -15,11 +15,15 @@
 package routers
 
 import (
-	"unknwon.dev/orbiter/modules/context"
+	"unknwon.dev/orbiter/internal/context"
+	"unknwon.dev/orbiter/internal/models"
 )
 
-func Config(ctx *context.Context) {
-	ctx.Data["Title"] = "Configuration"
-	ctx.Data["PageIsConfig"] = true
-	ctx.HTML(200, "config")
+func Dashboard(ctx *context.Context) {
+	ctx.Data["Title"] = "Dashboard"
+	ctx.Data["PageIsDashboard"] = true
+
+	ctx.Data["NumWebhooks"] = models.CountWebhook()
+
+	ctx.HTML(200, "dashboard")
 }

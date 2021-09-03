@@ -20,19 +20,19 @@ import (
 
 	"github.com/unknwon/com"
 
-	"unknwon.dev/orbiter/models/errors"
-	"unknwon.dev/orbiter/modules/tool"
+	"unknwon.dev/orbiter/internal/models/errors"
+	"unknwon.dev/orbiter/internal/tool"
 )
 
 type CollectType int
 
 const (
-	COLLECT_TYPE_GITHUB CollectType = iota + 1
+	CollectTypeGitHub CollectType = iota + 1
 )
 
 func (t CollectType) String() string {
 	switch t {
-	case COLLECT_TYPE_GITHUB:
+	case CollectTypeGitHub:
 		return "GitHub"
 	}
 	return com.ToStr(t)
@@ -59,7 +59,7 @@ func NewCollector(name string, tp CollectType) (*Collector, error) {
 	collector := &Collector{
 		Name:    name,
 		Type:    tp,
-		Secret:  tool.NewSecretToekn(),
+		Secret:  tool.NewSecretToken(),
 		Created: time.Now().UTC().UnixNano(),
 	}
 	if err := x.Create(collector).Error; err != nil {
@@ -96,7 +96,7 @@ func ListCollectors() ([]*Collector, error) {
 }
 
 func RegenerateCollectorSecret(id int64) error {
-	return x.First(new(Collector), id).Update("secret", tool.NewSecretToekn()).Error
+	return x.First(new(Collector), id).Update("secret", tool.NewSecretToken()).Error
 }
 
 func UpdateCollector(collector *Collector) error {

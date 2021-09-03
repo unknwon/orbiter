@@ -24,11 +24,11 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/macaron.v1"
 
-	"unknwon.dev/orbiter/modules/context"
-	"unknwon.dev/orbiter/modules/setting"
-	"unknwon.dev/orbiter/modules/template"
-	"unknwon.dev/orbiter/routers"
-	apiv1 "unknwon.dev/orbiter/routers/api/v1"
+	"unknwon.dev/orbiter/internal/context"
+	"unknwon.dev/orbiter/internal/routers"
+	apiv1 "unknwon.dev/orbiter/internal/routers/api/v1"
+	"unknwon.dev/orbiter/internal/setting"
+	"unknwon.dev/orbiter/internal/template"
 )
 
 const APP_VER = "0.5.4.0210"

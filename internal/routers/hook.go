@@ -15,11 +15,11 @@
 package routers
 
 import (
-	"unknwon.dev/orbiter/models"
-	"unknwon.dev/orbiter/models/errors"
-	"unknwon.dev/orbiter/modules/context"
-	"unknwon.dev/orbiter/modules/tool"
-	"unknwon.dev/orbiter/modules/webhook"
+	"unknwon.dev/orbiter/internal/context"
+	"unknwon.dev/orbiter/internal/models"
+	"unknwon.dev/orbiter/internal/models/errors"
+	"unknwon.dev/orbiter/internal/tool"
+	"unknwon.dev/orbiter/internal/webhook"
 )
 
 func Hook(ctx *context.Context) {

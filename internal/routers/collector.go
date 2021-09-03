@@ -20,10 +20,10 @@ import (
 	"github.com/go-macaron/binding"
 	"gopkg.in/macaron.v1"
 
-	"unknwon.dev/orbiter/models"
-	"unknwon.dev/orbiter/models/errors"
-	"unknwon.dev/orbiter/modules/context"
-	"unknwon.dev/orbiter/modules/form"
+	"unknwon.dev/orbiter/internal/context"
+	"unknwon.dev/orbiter/internal/form"
+	"unknwon.dev/orbiter/internal/models"
+	"unknwon.dev/orbiter/internal/models/errors"
 )
 
 func Collectors(ctx *context.Context) {
@@ -63,7 +63,7 @@ func NewCollectorPost(ctx *context.Context, form NewCollectorForm) {
 		return
 	}
 
-	collector, err := models.NewCollector(form.Name, models.COLLECT_TYPE_GITHUB)
+	collector, err := models.NewCollector(form.Name, models.CollectTypeGitHub)
 	if err != nil {
 		if errors.IsCollectorExists(err) {
 			ctx.Data["Err_Name"] = true

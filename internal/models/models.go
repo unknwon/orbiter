@@ -21,7 +21,7 @@ import (
 	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 
-	"unknwon.dev/orbiter/modules/setting"
+	"unknwon.dev/orbiter/internal/setting"
 )
 
 type Engine struct {
@@ -36,11 +36,11 @@ func init() {
 	if err != nil {
 		log.Fatalf("Fail to open database: %s", err)
 	}
-	x = &Engine{&db}
+	x = &Engine{db}
 
 	x.Set("gorm:table_options", "ENGINE=InnoDB").AutoMigrate(new(Collector), new(Webhook), new(Application))
 }
 
 func IsRecordNotFound(err error) bool {
-	return err == gorm.RecordNotFound
+	return err == gorm.ErrRecordNotFound
 }
