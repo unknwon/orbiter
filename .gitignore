@@ -2,3 +2,5 @@ orbiter
 custom
 orbiter.sublime-project
 orbiter.sublime-workspace
+/.idea
+.task
