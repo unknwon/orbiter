@@ -18,8 +18,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Unknwon/orbiter/models/errors"
-	"github.com/Unknwon/orbiter/modules/tool"
+	"unknwon.dev/orbiter/models/errors"
+	"unknwon.dev/orbiter/modules/tool"
 )
 
 // Application represents a consumer application that calls APIs.

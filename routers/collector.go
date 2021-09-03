@@ -20,10 +20,10 @@ import (
 	"github.com/go-macaron/binding"
 	"gopkg.in/macaron.v1"
 
-	"github.com/Unknwon/orbiter/models"
-	"github.com/Unknwon/orbiter/models/errors"
-	"github.com/Unknwon/orbiter/modules/context"
-	"github.com/Unknwon/orbiter/modules/form"
+	"unknwon.dev/orbiter/models"
+	"unknwon.dev/orbiter/models/errors"
+	"unknwon.dev/orbiter/modules/context"
+	"unknwon.dev/orbiter/modules/form"
 )
 
 func Collectors(ctx *context.Context) {

@@ -17,11 +17,11 @@ package models
 import (
 	"fmt"
 
-	log "github.com/Sirupsen/logrus"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
+	log "github.com/sirupsen/logrus"
 
-	"github.com/Unknwon/orbiter/modules/setting"
+	"unknwon.dev/orbiter/modules/setting"
 )
 
 type Engine struct {

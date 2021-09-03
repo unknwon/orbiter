@@ -18,9 +18,9 @@ import (
 	"bytes"
 	"encoding/json"
 
-	"github.com/Unknwon/orbiter/models"
-	"github.com/Unknwon/orbiter/models/errors"
-	"github.com/Unknwon/orbiter/modules/context"
+	"unknwon.dev/orbiter/models"
+	"unknwon.dev/orbiter/models/errors"
+	"unknwon.dev/orbiter/modules/context"
 )
 
 func Webhooks(ctx *context.Context) {

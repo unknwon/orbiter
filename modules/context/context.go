@@ -19,12 +19,12 @@ import (
 	"fmt"
 	"strings"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/go-macaron/session"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/macaron.v1"
 
-	"github.com/Unknwon/orbiter/modules/form"
-	"github.com/Unknwon/orbiter/modules/setting"
+	"unknwon.dev/orbiter/modules/form"
+	"unknwon.dev/orbiter/modules/setting"
 )
 
 type Context struct {

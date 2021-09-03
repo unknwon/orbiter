@@ -15,7 +15,7 @@
 package v1
 
 import (
-	"github.com/Unknwon/orbiter/models"
+	"unknwon.dev/orbiter/models"
 )
 
 func ListWebhooks(ctx *Context) {

@@ -20,7 +20,7 @@ import (
 
 	"github.com/dustin/go-humanize"
 
-	"github.com/Unknwon/orbiter/modules/setting"
+	"unknwon.dev/orbiter/modules/setting"
 )
 
 func NewFuncMap() []template.FuncMap {

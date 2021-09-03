@@ -18,8 +18,8 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/Unknwon/com"
 	"github.com/go-macaron/binding"
+	"github.com/unknwon/com"
 )
 
 type Form interface {

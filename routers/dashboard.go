@@ -15,8 +15,8 @@
 package routers
 
 import (
-	"github.com/Unknwon/orbiter/models"
-	"github.com/Unknwon/orbiter/modules/context"
+	"unknwon.dev/orbiter/models"
+	"unknwon.dev/orbiter/modules/context"
 )
 
 func Dashboard(ctx *context.Context) {

@@ -17,9 +17,9 @@ package models
 import (
 	"time"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 
-	"github.com/Unknwon/orbiter/models/errors"
+	"unknwon.dev/orbiter/models/errors"
 )
 
 // Webhook represents a history record of webhook.

@@ -29,12 +29,12 @@ First of all, you need to install MySQL (WHAT?!).
 Then, install Orbiter:
 
 ```
-go get github.com/Unknwon/orbiter
+go get unknwon.dev/orbiter
 ```
 
 Please add `-u` flag to update in the future.
 
-Now, go to directory `$GOPATH/src/github.com/Unknwon/orbiter`:
+Now, go to directory `$GOPATH/src/unknwon.dev/orbiter`:
 
 ```sh
 $ go build

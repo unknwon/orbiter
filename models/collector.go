@@ -18,10 +18,10 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/Unknwon/com"
+	"github.com/unknwon/com"
 
-	"github.com/Unknwon/orbiter/models/errors"
-	"github.com/Unknwon/orbiter/modules/tool"
+	"unknwon.dev/orbiter/models/errors"
+	"unknwon.dev/orbiter/modules/tool"
 )
 
 type CollectType int

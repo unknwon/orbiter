@@ -15,8 +15,8 @@
 package setting
 
 import (
-	log "github.com/Sirupsen/logrus"
-	"github.com/Unknwon/com"
+	log "github.com/sirupsen/logrus"
+	"github.com/unknwon/com"
 	"gopkg.in/ini.v1"
 )
 
