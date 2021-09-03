@@ -31,14 +31,14 @@ import (
 	"unknwon.dev/orbiter/internal/template"
 )
 
-const APP_VER = "0.5.4.0210"
+const Version = "dev"
 
 func init() {
-	setting.AppVer = APP_VER
+	setting.AppVer = Version
 }
 
 func main() {
-	log.Printf("Orbiter %s", APP_VER)
+	log.Printf("Orbiter %s", Version)
 	m := macaron.Classic()
 	m.Use(macaron.Renderer(macaron.RenderOptions{
 		Funcs:      template.NewFuncMap(),

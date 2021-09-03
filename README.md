@@ -85,13 +85,13 @@ Following parameters are all optional, and combine with condition **AND**.
 
 |Name|Description|
 |----|-----------|
-|collector_id|List webhooks that were received by certain collector|
-|owner|List webhooks that belongs to certain repository owner|
-|repo_name|List webhooks that belongs to certain repository|
-|event_type|List webhooks that have certain event type|
-|sender|List webhooks that were triggered by someone|
-|after|List webhooks that received after certain time point, this value is Unix nanoseconds|
-|limit|Maximum number of webhooks to response|
+|`collector_id`|List webhooks that were received by certain collector|
+|`owner`|List webhooks that belongs to certain repository owner|
+|`repo_name`|List webhooks that belongs to certain repository|
+|`event_type`|List webhooks that have certain event type|
+|`sender`|List webhooks that were triggered by someone|
+|`after`|List webhooks that received after certain time point, this value is Unix nanoseconds|
+|`limit`|Maximum number of webhooks to response|
 
 ##### Example
 
