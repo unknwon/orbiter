@@ -19,9 +19,10 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/flamego/binding"
 	"github.com/flamego/flamego"
 	"github.com/flamego/template"
-	"github.com/go-macaron/binding"
+	macaronBinding "github.com/go-macaron/binding"
 	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
 	log "unknwon.dev/clog/v2"
@@ -56,20 +57,22 @@ func main() {
 		},
 	))
 
-	bindIgnErr := binding.BindIgnErr
+	bindIgnErr := macaronBinding.BindIgnErr
 
 	m.Group("", func() {
 		f.Get("/", route.Dashboard)
 
-		m.Group("/collectors", func() {
-			m.Get("", route.Collectors)
-			m.Combo("/new").Get(route.NewCollector).
-				Post(bindIgnErr(route.NewCollectorForm{}), route.NewCollectorPost)
-			m.Group("/:id", func() {
-				m.Combo("").Get(route.EditCollector).
-					Post(bindIgnErr(route.NewCollectorForm{}), route.EditCollectorPost)
-				m.Post("/regenerate_token", route.RegenerateCollectorSecret)
-				m.Post("/delete", route.DeleteCollector)
+		f.Group("/collectors", func() {
+			f.Get("", route.Collectors)
+			f.Combo("/new").
+				Get(route.NewCollector).
+				Post(binding.Form(route.NewCollectorForm{}), route.NewCollectorPost)
+			f.Group("/{id}", func() {
+				f.Combo("").
+					Get(route.EditCollector).
+					Post(binding.Form(route.NewCollectorForm{}), route.EditCollectorPost)
+				f.Post("/regenerate_token", route.RegenerateCollectorSecret)
+				f.Post("/delete", route.DeleteCollector)
 			})
 		})
 

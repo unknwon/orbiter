@@ -16,19 +16,11 @@ package form
 
 import (
 	"reflect"
-	"strings"
 
-	"github.com/go-macaron/binding"
-	"github.com/unknwon/com"
+	"github.com/flamego/binding"
+	"github.com/flamego/template"
+	"github.com/flamego/validator"
 )
-
-type Form interface {
-	binding.Validator
-}
-
-func init() {
-	binding.SetNameMapper(com.ToSnakeCase)
-}
 
 // AssignForm assign form values back to the template data.
 func AssignForm(form interface{}, data map[string]interface{}) {
@@ -48,45 +40,26 @@ func AssignForm(form interface{}, data map[string]interface{}) {
 		if fieldName == "-" {
 			continue
 		} else if len(fieldName) == 0 {
-			fieldName = com.ToSnakeCase(field.Name)
+			fieldName = field.Name
 		}
 
 		data[fieldName] = val.Field(i).Interface()
 	}
 }
 
-func getRuleBody(field reflect.StructField, prefix string) string {
-	for _, rule := range strings.Split(field.Tag.Get("binding"), ";") {
-		if strings.HasPrefix(rule, prefix) {
-			return rule[len(prefix) : len(rule)-1]
+func Validate(errs binding.Errors, data template.Data, f interface{}) {
+	AssignForm(f, data)
+
+	var validationErrs validator.ValidationErrors
+	for _, err := range errs {
+		if err.Category == binding.ErrorCategoryValidation {
+			validationErrs = err.Err.(validator.ValidationErrors)
+			break
 		}
 	}
-	return ""
-}
-
-func GetSize(field reflect.StructField) string {
-	return getRuleBody(field, "Size(")
-}
-
-func GetMinSize(field reflect.StructField) string {
-	return getRuleBody(field, "MinSize(")
-}
-
-func GetMaxSize(field reflect.StructField) string {
-	return getRuleBody(field, "MaxSize(")
-}
-
-func GetInclude(field reflect.StructField) string {
-	return getRuleBody(field, "Include(")
-}
-
-func Validate(errs binding.Errors, data map[string]interface{}, f Form) binding.Errors {
-	if errs.Len() == 0 {
-		return errs
+	if len(validationErrs) == 0 {
+		return
 	}
-
-	data["HasError"] = true
-	AssignForm(f, data)
 
 	typ := reflect.TypeOf(f)
 	val := reflect.ValueOf(f)
@@ -105,35 +78,34 @@ func Validate(errs binding.Errors, data map[string]interface{}, f Form) binding.
 			continue
 		}
 
-		if errs[0].FieldNames[0] == field.Name {
+		if validationErrs[0].StructField() == field.Name {
 			data["Err_"+field.Name] = true
 
 			name := field.Tag.Get("name")
 
-			switch errs[0].Classification {
-			case binding.ERR_REQUIRED:
-				data["ErrorMsg"] = name + " cannot be empty."
-			case binding.ERR_ALPHA_DASH:
-				data["ErrorMsg"] = name + " must be valid alpha or numeric or dash(-_) characters."
-			case binding.ERR_ALPHA_DASH_DOT:
-				data["ErrorMsg"] = name + " must be valid alpha or numeric or dash(-_) or dot characters."
-			case binding.ERR_SIZE:
-				data["ErrorMsg"] = name + " must be size " + GetSize(field)
-			case binding.ERR_MIN_SIZE:
-				data["ErrorMsg"] = name + " must contain at least " + GetMinSize(field) + " characters."
-			case binding.ERR_MAX_SIZE:
-				data["ErrorMsg"] = name + " must contain at most " + GetMaxSize(field) + " characters."
-			case binding.ERR_EMAIL:
-				data["ErrorMsg"] = name + " is not a valid email address."
-			case binding.ERR_URL:
-				data["ErrorMsg"] = name + " is not a valid URL."
-			case binding.ERR_INCLUDE:
-				data["ErrorMsg"] = name + " must contain substring '" + GetInclude(field) + "'."
+			switch validationErrs[0].Tag() {
+			case "max":
+				data["Error"] = name + " cannot contain more than " + validationErrs[0].Param() + " characters."
+				// 	case binding.ERR_REQUIRED:
+				// 		data["ErrorMsg"] = name + " cannot be empty."
+				// 	case binding.ERR_ALPHA_DASH:
+				// 		data["ErrorMsg"] = name + " must be valid alpha or numeric or dash(-_) characters."
+				// 	case binding.ERR_ALPHA_DASH_DOT:
+				// 		data["ErrorMsg"] = name + " must be valid alpha or numeric or dash(-_) or dot characters."
+				// 	case binding.ERR_SIZE:
+				// 		data["ErrorMsg"] = name + " must be size " + GetSize(field)
+				// 	case binding.ERR_MIN_SIZE:
+				// 		data["ErrorMsg"] = name + " must contain at least " + GetMinSize(field) + " characters."
+				// 	case binding.ERR_EMAIL:
+				// 		data["ErrorMsg"] = name + " is not a valid email address."
+				// 	case binding.ERR_URL:
+				// 		data["ErrorMsg"] = name + " is not a valid URL."
+				// 	case binding.ERR_INCLUDE:
+				// 		data["ErrorMsg"] = name + " must contain substring '" + GetInclude(field) + "'."
 			default:
-				data["ErrorMsg"] = "Unknown error: " + errs[0].Classification
+				data["Error"] = validationErrs[0].Error()
 			}
-			return errs
+			break
 		}
 	}
-	return errs
 }

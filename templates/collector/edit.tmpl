@@ -1,26 +1,28 @@
 {{template "base/head" .}}
 <section class="content-header">
-	<h1>
-	  Collectors
-	</h1>
+  <h1>
+    Collectors
+  </h1>
 </section>
 <section class="content">
-	<div class="row">
-	  <div class="col-xs-12">
-	  	<div class="box box-primary">
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box box-primary">
         <div class="box-header with-border">
           <h3 class="box-title">{{.Collector.Name}}</h3>
         </div>
         <form method="post">
           <div class="box-body">
-          	{{template "base/alert" .}}
+              {{template "base/alert" .}}
             <div class="form-group {{if .Err_Name}}has-error{{end}}">
               <label for="name">Name</label>
-              <input class="form-control" id="name" name="name" value="{{.Collector.Name}}" placeholder="Name of collector" autofocus required>
+              <input class="form-control" id="name" name="name" value="{{.Collector.Name}}"
+                     placeholder="Name of collector" autofocus required>
             </div>
             <div class="form-group">
               <label for="type">Type</label>
-              <input class="form-control" id="type" value="{{.Collector.Type}}" placeholder="Type of incoming webhooks" disabled>
+              <input class="form-control" id="type" value="{{.Collector.Type}}" placeholder="Type of incoming webhooks"
+                     disabled>
             </div>
             <div class="form-group">
               <label>Secret Token</label>
@@ -39,7 +41,8 @@
           <h3 class="box-title">Regenerate Secret Token</h3>
         </div>
         <div class="box-body">
-          <h5>Current secret token will be invalid after regenerated, make sure to update new token to all your applications.</h5>
+          <h5>Current secret token will be invalid after regenerated, make sure to update new token to all your
+            applications.</h5>
         </div>
         <div class="box-footer">
           <form action="/collectors/{{.Collector.ID}}/regenerate_token" method="post">
@@ -53,7 +56,8 @@
           <h3 class="box-title">Delete Collector</h3>
         </div>
         <div class="box-body">
-          <h5>All data related to this collector will be deleted permanently, and incoming webhooks for this collector will no longer be accepted.</h5>
+          <h5>All data related to this collector will be deleted permanently, and incoming webhooks for this collector
+            will no longer be accepted.</h5>
         </div>
         <div class="box-footer">
           <form action="/collectors/{{.Collector.ID}}/delete" method="post">
@@ -61,7 +65,7 @@
           </form>
         </div>
       </div>
-	  </div>
-	</div>
+    </div>
+  </div>
 </section>
 {{template "base/footer" .}}

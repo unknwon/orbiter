@@ -16,130 +16,139 @@ package route
 
 import (
 	"fmt"
+	"net/http"
 
-	"github.com/go-macaron/binding"
-	"gopkg.in/macaron.v1"
+	"github.com/flamego/binding"
+	"github.com/flamego/flamego"
+	"github.com/flamego/template"
 
-	"unknwon.dev/orbiter/internal/context"
-	"unknwon.dev/orbiter/internal/form"
 	"unknwon.dev/orbiter/internal/db"
 	"unknwon.dev/orbiter/internal/db/errors"
+	"unknwon.dev/orbiter/internal/form"
 )
 
-func Collectors(ctx *context.Context) {
-	ctx.Data["Title"] = "Collectors"
-	ctx.Data["PageIsCollector"] = true
+// GET /collectors
+func Collectors(w http.ResponseWriter, t template.Template, data template.Data) {
+	data["Title"] = "Collectors"
+	data["PageIsCollector"] = true
 
 	collectors, err := db.ListCollectors()
 	if err != nil {
-		ctx.Error(500, err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	ctx.Data["Collectors"] = collectors
+	data["Collectors"] = collectors
 
-	ctx.HTML(200, "collector/list")
+	t.HTML(http.StatusOK, "collector/list")
 }
 
-func NewCollector(ctx *context.Context) {
-	ctx.Data["Title"] = "New Collector"
-	ctx.Data["PageIsCollector"] = true
-	ctx.HTML(200, "collector/new")
+// GET /collectors/new
+func NewCollector(t template.Template, data template.Data) {
+	data["Title"] = "New Collector"
+	data["PageIsCollector"] = true
+	t.HTML(http.StatusOK, "collector/new")
 }
 
 type NewCollectorForm struct {
-	Name string `binding:"Required;MaxSize(30)" name:"Collector name"`
+	Name string `form:"name" validate:"required,max=30" name:"Collector name"`
 }
 
-func (f *NewCollectorForm) Validate(ctx *macaron.Context, errs binding.Errors) binding.Errors {
-	return form.Validate(errs, ctx.Data, f)
-}
+// POST /collectors/new
+func NewCollectorPost(c flamego.Context, t template.Template, data template.Data, errs binding.Errors, f NewCollectorForm) {
+	data["Title"] = "New Collector"
+	data["PageIsCollector"] = true
 
-func NewCollectorPost(ctx *context.Context, form NewCollectorForm) {
-	ctx.Data["Title"] = "New Collector"
-	ctx.Data["PageIsCollector"] = true
-
-	if ctx.HasError() {
-		ctx.HTML(200, "collector/new")
+	if len(errs) > 0 {
+		form.Validate(errs, data, f)
+		t.HTML(http.StatusOK, "collector/new")
 		return
 	}
 
-	collector, err := db.NewCollector(form.Name, db.CollectTypeGitHub)
+	collector, err := db.NewCollector(f.Name, db.CollectTypeGitHub)
 	if err != nil {
 		if errors.IsCollectorExists(err) {
-			ctx.Data["Err_Name"] = true
-			ctx.RenderWithErr("Collector name has been used.", "collector/new", form)
+			form.AssignForm(f, data)
+			data["Error"] = "Collector name has been used."
+			data["Err_Name"] = true
+			t.HTML(http.StatusOK, "collector/new")
 		} else {
-			ctx.Handle(500, "NewCollector", err)
+			http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	ctx.Redirect(fmt.Sprintf("/collectors/%d", collector.ID))
+	c.Redirect(fmt.Sprintf("/collectors/%d", collector.ID))
 }
 
-func parseCollectorByID(ctx *context.Context) *db.Collector {
-	collector, err := db.GetCollectorByID(ctx.ParamsInt64(":id"))
+func parseCollectorByID(c flamego.Context) *db.Collector {
+	collector, err := db.GetCollectorByID(c.ParamInt64("id"))
 	if err != nil {
 		if errors.IsCollectorNotFound(err) {
-			ctx.Handle(404, "EditApplication", nil)
+			http.NotFound(c.ResponseWriter(), c.Request().Request)
 		} else {
-			ctx.Handle(500, "GetCollectorByID", err)
+			http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		}
 		return nil
 	}
-	ctx.Data["Collector"] = collector
 	return collector
 }
 
-func EditCollector(ctx *context.Context) {
-	ctx.Data["Title"] = "Edit Collector"
-	ctx.Data["PageIsCollector"] = true
+// GET /collectors/{id}
+func EditCollector(c flamego.Context, t template.Template, data template.Data) {
+	data["Title"] = "Edit Collector"
+	data["PageIsCollector"] = true
 
-	parseCollectorByID(ctx)
-	if ctx.Written() {
+	data["Collector"] = parseCollectorByID(c)
+	if c.ResponseWriter().Written() {
 		return
 	}
 
-	ctx.HTML(200, "collector/edit")
+	t.HTML(http.StatusOK, "collector/edit")
 }
 
-func EditCollectorPost(ctx *context.Context, form NewCollectorForm) {
-	ctx.Data["Title"] = "Edit Collector"
-	ctx.Data["PageIsCollector"] = true
+// POST /collectors/{id}
+func EditCollectorPost(c flamego.Context, t template.Template, data template.Data, f NewCollectorForm) {
+	data["Title"] = "Edit Collector"
+	data["PageIsCollector"] = true
 
-	collector := parseCollectorByID(ctx)
-	if ctx.Written() {
+	collector := parseCollectorByID(c)
+	if c.ResponseWriter().Written() {
 		return
 	}
+	data["Collector"] = collector
 
-	collector.Name = form.Name
+	collector.Name = f.Name
 	if err := db.UpdateCollector(collector); err != nil {
 		if errors.IsCollectorExists(err) {
-			ctx.Data["Err_Name"] = true
-			ctx.RenderWithErr("Collector name has been used.", "collector/edit", form)
+			data["Error"] = "Collector name has been used."
+			data["Err_Name"] = true
+			t.HTML(http.StatusOK, "collector/edit")
 		} else {
-			ctx.Error(500, err.Error())
+			http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	ctx.Redirect(fmt.Sprintf("/collectors/%d", collector.ID))
+	c.Redirect(fmt.Sprintf("/collectors/%d", collector.ID))
 }
 
-func RegenerateCollectorSecret(ctx *context.Context) {
-	if err := db.RegenerateCollectorSecret(ctx.ParamsInt64(":id")); err != nil {
-		ctx.Error(500, err.Error())
+// POST /collectors/{id}/regenerate_token
+func RegenerateCollectorSecret(c flamego.Context) {
+	id := c.ParamInt64("id")
+	if err := db.RegenerateCollectorSecret(id); err != nil {
+		http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	ctx.Redirect(fmt.Sprintf("/collectors/%d", ctx.ParamsInt64(":id")))
+	c.Redirect(fmt.Sprintf("/collectors/%d", id))
 }
 
-func DeleteCollector(ctx *context.Context) {
-	if err := db.DeleteCollectorByID(ctx.ParamsInt64(":id")); err != nil {
-		ctx.Error(500, err.Error())
+// POST /collectors/{id}/delete
+func DeleteCollector(c flamego.Context) {
+	if err := db.DeleteCollectorByID(c.ParamInt64("id")); err != nil {
+		http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	ctx.Redirect("/collectors")
+	c.Redirect("/collectors")
 }

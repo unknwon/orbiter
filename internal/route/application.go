@@ -17,11 +17,7 @@ package route
 import (
 	"fmt"
 
-	"github.com/go-macaron/binding"
-	"gopkg.in/macaron.v1"
-
 	"unknwon.dev/orbiter/internal/context"
-	"unknwon.dev/orbiter/internal/form"
 	"unknwon.dev/orbiter/internal/db"
 	"unknwon.dev/orbiter/internal/db/errors"
 )
@@ -48,10 +44,6 @@ func NewApplication(ctx *context.Context) {
 
 type NewApplicationForm struct {
 	Name string `binding:"Required;MaxSize(30)" name:"Application name"`
-}
-
-func (f *NewApplicationForm) Validate(ctx *macaron.Context, errs binding.Errors) binding.Errors {
-	return form.Validate(errs, ctx.Data, f)
 }
 
 func NewApplicationPost(ctx *context.Context, form NewApplicationForm) {

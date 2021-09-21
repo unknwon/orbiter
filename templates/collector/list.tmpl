@@ -1,45 +1,45 @@
 {{template "base/head" .}}
 <section class="content-header">
-	<h1>
-	  Collectors
-	</h1>
+  <h1>
+    Collectors
+  </h1>
 </section>
 <section class="content">
-	<div class="row">
-	  <div class="col-xs-12">
-	    <div class="box">
-	      <div class="box-header">
-	        <h3 class="box-title">Collector List</h3>
-	        <div class="box-tools">
-	        	<a class="btn btn-primary btn-sm" href="/collectors/new">New Collector</a>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box">
+        <div class="box-header">
+          <h3 class="box-title">Collector List</h3>
+          <div class="box-tools">
+            <a class="btn btn-primary btn-sm" href="/collectors/new">New Collector</a>
           </div>
-	      </div>
-	      <div class="box-body table-responsive no-padding">
-	        <table class="table table-hover">
-	          <tbody>
-		          <tr>
-		            <th>ID</th>
-		            <th>Name</th>
-		            <th class="hidden-xs">Type</th>
-		            <th class="hidden-sm hidden-xs">Secret Token</th>
-		            <th class="hidden-xs">Created</th>
-		            <th width="50px">Op.</th>
-		          </tr>
-		          {{range .Collectors}}
-			          <tr>
-			            <td>{{.ID}}</td>
-			            <td>{{.Name}}</td>
-			            <td class="hidden-xs">{{.Type}}</td>
-			            <td class="hidden-sm hidden-xs">{{.Secret}}</td>
-			            <td class="hidden-xs">{{DateFmtShort .CreatedTime}}</td>
-			            <td><a href="/collectors/{{.ID}}"><i class="fa fa-pencil"></i></a></td>
-			          </tr>
-		          {{end}}
-	        	</tbody>
-	        </table>
-	      </div>
-	    </div>
-	  </div>
-	</div>
+        </div>
+        <div class="box-body table-responsive no-padding">
+          <table class="table table-hover">
+            <tbody>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th class="hidden-xs">Type</th>
+              <th class="hidden-sm hidden-xs">Secret Token</th>
+              <th class="hidden-xs">Created</th>
+              <th width="50px">Op.</th>
+            </tr>
+            {{range .Collectors}}
+              <tr>
+                <td>{{.ID}}</td>
+                <td>{{.Name}}</td>
+                <td class="hidden-xs">{{.Type}}</td>
+                <td class="hidden-sm hidden-xs">{{.Secret}}</td>
+                <td class="hidden-xs">{{DateFmtShort .CreatedTime}}</td>
+                <td><a href="/collectors/{{.ID}}"><i class="fa fa-pencil"></i></a></td>
+              </tr>
+            {{end}}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 {{template "base/footer" .}}

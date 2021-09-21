@@ -1,56 +1,55 @@
 <!doctype html>
 <html>
-	<head>
-	  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-	  <link rel="shortcut icon" href="/img/orbiter.png" />
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="shortcut icon" href="/img/orbiter.png"/>
 
 
-		<link rel="stylesheet" href="/assets/bootstrap-3.3.5/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/assets/font-awesome-4.5.0/css/font-awesome.min.css">
-		<link rel="stylesheet" href="/assets/AdminLTE-2.3.2/css/AdminLTE.min.css">
-		<link rel="stylesheet" href="/assets/AdminLTE-2.3.2/css/skins/skin-blue.min.css">
-	  <title>{{.Title}} - Orbiter</title>
-	</head>
+  <link rel="stylesheet" href="/assets/bootstrap-3.3.5/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/assets/font-awesome-4.5.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/assets/AdminLTE-2.3.2/css/AdminLTE.min.css">
+  <link rel="stylesheet" href="/assets/AdminLTE-2.3.2/css/skins/skin-blue.min.css">
+  <title>{{.Title}} - Orbiter</title>
+</head>
 
-	<body class="skin-blue sidebar-mini">
-		<div class="wrapper">
-			<header class="main-header">
-		    <a href="/" class="logo">
-		    	<span class="logo-mini"><img src="/img/orbiter.png" style="height: 35px"></span>
-		    	<span class="logo-lg"><img src="/img/orbiter-brand.png" style="height: 45px"></span>
-		    </a>
+<body class="skin-blue sidebar-mini">
+  <div class="wrapper">
+    <header class="main-header">
+      <a href="/" class="logo">
+        <span class="logo-mini"><img src="/img/orbiter.png" style="height: 35px"></span>
+        <span class="logo-lg"><img src="/img/orbiter-brand.png" style="height: 45px"></span>
+      </a>
 
-		    <nav class="navbar navbar-static-top" role="navigation">
-		      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
-		        <span class="sr-only">Toggle navigation</span>
-		      </a>
-		    </nav>
-			</header>
+      <nav class="navbar navbar-static-top" role="navigation">
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+          <span class="sr-only">Toggle navigation</span>
+        </a>
+      </nav>
+    </header>
 
-			<div class="main-sidebar">
-			  <div class="sidebar">
-			    <ul class="sidebar-menu">
-			      <li class="header">Control Center</li>
-			      <li {{if .PageIsDashboard}}class="active"{{end}}>
-			      	<a href="/"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
-			      </li>
-			      <li {{if .PageIsCollector}}class="active"{{end}}>
-			      	<a href="/collectors"><i class="fa fa-connectdevelop"></i> <span>Collectors</span></a>
-			      </li>
-			      <li {{if .PageIsApplication}}class="active"{{end}}>
-			      	<a href="/applications"><i class="fa fa-cubes"></i> <span>Applications</span></a>
-			      </li>
-			      <li {{if .PageIsWebhook}}class="active"{{end}}>
-			      	<a href="/webhooks"><i class="fa fa-rocket"></i> <span>Webhooks</span></a>
-			      </li>
-			      <!-- <li {{if .PageIsConfig}}class="active"{{end}}>
-			      	<a href="/config"><i class="fa fa-cogs"></i> <span>Configuration</span></a>
-			      </li> -->
-			    </ul>
-			  </div>
-			</div>
+    <div class="main-sidebar">
+      <div class="sidebar">
+        <ul class="sidebar-menu">
+          <li class="header">Control Center</li>
+          <li {{if .PageIsDashboard}}class="active"{{end}}>
+            <a href="/"><i class="fa fa-dashboard"></i> <span>Dashboard</span></a>
+          </li>
+          <li {{if .PageIsCollector}}class="active"{{end}}>
+            <a href="/collectors"><i class="fa fa-connectdevelop"></i> <span>Collectors</span></a>
+          </li>
+          <li {{if .PageIsApplication}}class="active"{{end}}>
+            <a href="/applications"><i class="fa fa-cubes"></i> <span>Applications</span></a>
+          </li>
+          <li {{if .PageIsWebhook}}class="active"{{end}}>
+            <a href="/webhooks"><i class="fa fa-rocket"></i> <span>Webhooks</span></a>
+          </li>
+          <!-- <li {{if .PageIsConfig}}class="active"{{end}}>
+                      <a href="/config"><i class="fa fa-cogs"></i> <span>Configuration</span></a>
+                    </li> -->
+        </ul>
+      </div>
+    </div>
 
-			<div class="content-wrapper">
-				
+    <div class="content-wrapper">
