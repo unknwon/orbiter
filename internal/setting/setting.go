@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	AppVer string
+	Version = "dev"
 
 	HTTPPort int
 

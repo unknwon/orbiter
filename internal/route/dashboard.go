@@ -12,18 +12,19 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package routers
+package route
 
 import (
-	"unknwon.dev/orbiter/internal/context"
+	"net/http"
+
+	"github.com/flamego/template"
+
 	"unknwon.dev/orbiter/internal/models"
 )
 
-func Dashboard(ctx *context.Context) {
-	ctx.Data["Title"] = "Dashboard"
-	ctx.Data["PageIsDashboard"] = true
-
-	ctx.Data["NumWebhooks"] = models.CountWebhook()
-
-	ctx.HTML(200, "dashboard")
+func Dashboard(t template.Template, data template.Data) {
+	data["Title"] = "Dashboard"
+	data["PageIsDashboard"] = true
+	data["NumWebhooks"] = models.CountWebhook()
+	t.HTML(http.StatusOK, "dashboard")
 }

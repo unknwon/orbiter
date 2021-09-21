@@ -12,31 +12,16 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package template
+package route
 
 import (
-	"html/template"
-	"time"
+	"net/http"
 
-	"github.com/dustin/go-humanize"
-
-	"unknwon.dev/orbiter/internal/setting"
+	"github.com/flamego/template"
 )
 
-func NewFuncMap() []template.FuncMap {
-	return []template.FuncMap{map[string]interface{}{
-		"AppVer": func() string {
-			return setting.AppVer
-		},
-		"DateFmtShort": func(t time.Time) string {
-			return t.Format("Jan 02, 2006")
-		},
-		"DateFmtLong": func(t time.Time) string {
-			return t.Format(time.RFC1123Z)
-		},
-		"TimeFmtShort": func(t time.Time) string {
-			return t.Format("15:04:05")
-		},
-		"NumCommas": humanize.Comma,
-	}}
+func Config(t template.Template, data template.Data) {
+	data["Title"] = "Configuration"
+	data["PageIsConfig"] = true
+	t.HTML(http.StatusOK, "config")
 }

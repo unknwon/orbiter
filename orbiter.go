@@ -19,29 +19,25 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/flamego/flamego"
+	"github.com/flamego/template"
 	"github.com/go-macaron/binding"
 	"github.com/go-macaron/session"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/macaron.v1"
 
 	"unknwon.dev/orbiter/internal/context"
-	"unknwon.dev/orbiter/internal/routers"
-	apiv1 "unknwon.dev/orbiter/internal/routers/api/v1"
+	"unknwon.dev/orbiter/internal/route"
+	apiv1 "unknwon.dev/orbiter/internal/route/api/v1"
 	"unknwon.dev/orbiter/internal/setting"
-	"unknwon.dev/orbiter/internal/template"
+	"unknwon.dev/orbiter/internal/templateutil"
 )
 
-const Version = "dev"
-
-func init() {
-	setting.AppVer = Version
-}
-
 func main() {
-	log.Printf("Orbiter %s", Version)
+	log.Printf("Orbiter %s", setting.Version)
 	m := macaron.Classic()
 	m.Use(macaron.Renderer(macaron.RenderOptions{
-		Funcs:      template.NewFuncMap(),
+		Funcs:      templateutil.NewFuncMap(),
 		IndentJSON: macaron.Env != macaron.PROD,
 	}))
 	m.Use(session.Sessioner())
@@ -50,41 +46,49 @@ func main() {
 	bindIgnErr := binding.BindIgnErr
 
 	m.Group("", func() {
-		m.Get("/", routers.Dashboard)
+		f := flamego.New()
+		f.Use(template.Templater(
+			template.Options{
+				FuncMaps: templateutil.NewFuncMap(),
+			},
+		))
+		f.Get("/", route.Dashboard)
+		m.Get("/", f.ServeHTTP)
 
 		m.Group("/collectors", func() {
-			m.Get("", routers.Collectors)
-			m.Combo("/new").Get(routers.NewCollector).
-				Post(bindIgnErr(routers.NewCollectorForm{}), routers.NewCollectorPost)
+			m.Get("", route.Collectors)
+			m.Combo("/new").Get(route.NewCollector).
+				Post(bindIgnErr(route.NewCollectorForm{}), route.NewCollectorPost)
 			m.Group("/:id", func() {
-				m.Combo("").Get(routers.EditCollector).
-					Post(bindIgnErr(routers.NewCollectorForm{}), routers.EditCollectorPost)
-				m.Post("/regenerate_token", routers.RegenerateCollectorSecret)
-				m.Post("/delete", routers.DeleteCollector)
+				m.Combo("").Get(route.EditCollector).
+					Post(bindIgnErr(route.NewCollectorForm{}), route.EditCollectorPost)
+				m.Post("/regenerate_token", route.RegenerateCollectorSecret)
+				m.Post("/delete", route.DeleteCollector)
 			})
 		})
 
 		m.Group("/applications", func() {
-			m.Get("", routers.Applications)
-			m.Combo("/new").Get(routers.NewApplication).
-				Post(bindIgnErr(routers.NewApplicationForm{}), routers.NewApplicationPost)
+			m.Get("", route.Applications)
+			m.Combo("/new").Get(route.NewApplication).
+				Post(bindIgnErr(route.NewApplicationForm{}), route.NewApplicationPost)
 			m.Group("/:id", func() {
-				m.Combo("").Get(routers.EditApplication).
-					Post(bindIgnErr(routers.NewApplicationForm{}), routers.EditApplicationPost)
-				m.Post("/regenerate_token", routers.RegenerateApplicationSecret)
-				m.Post("/delete", routers.DeleteApplication)
+				m.Combo("").Get(route.EditApplication).
+					Post(bindIgnErr(route.NewApplicationForm{}), route.EditApplicationPost)
+				m.Post("/regenerate_token", route.RegenerateApplicationSecret)
+				m.Post("/delete", route.DeleteApplication)
 			})
 		})
 
 		m.Group("/webhooks", func() {
-			m.Get("", routers.Webhooks)
-			m.Get("/:id", routers.ViewWebhook)
+			m.Get("", route.Webhooks)
+			m.Get("/:id", route.ViewWebhook)
 		})
 
-		m.Get("/config", routers.Config)
+		f.Get("/config", route.Config)
+		m.Get("/config", f.ServeHTTP)
 	}, context.BasicAuth())
 
-	m.Post("/hook", routers.Hook)
+	m.Post("/hook", route.Hook)
 
 	m.Group("/api", func() {
 		apiv1.RegisterRoutes(m)

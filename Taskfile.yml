@@ -21,7 +21,7 @@ tasks:
   build:
     desc: Build binary
     cmds:
-      - go build -v -trimpath -o {{.NAME}}
+      - go build -ldflags '-X unknwon.dev/orbiter/internal/setting.Version={{.BUILD_COMMIT}}' -v -trimpath -o {{.NAME}}
     sources:
       - ./*.go
       - internal/**/*.go
