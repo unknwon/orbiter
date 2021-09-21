@@ -15,34 +15,38 @@
 package route
 
 import (
-	"unknwon.dev/orbiter/internal/context"
+	"net/http"
+
+	"github.com/flamego/flamego"
+
 	"unknwon.dev/orbiter/internal/db"
 	"unknwon.dev/orbiter/internal/db/errors"
 	"unknwon.dev/orbiter/internal/tool"
 	"unknwon.dev/orbiter/internal/webhook"
 )
 
-func Hook(ctx *context.Context) {
-	collector, err := db.GetCollectorBySecret(ctx.Query("secret"))
+// POST /hook
+func Hook(c flamego.Context) {
+	collector, err := db.GetCollectorBySecret(c.Query("secret"))
 	if err != nil {
 		if errors.IsCollectorNotFound(err) {
-			ctx.Error(403)
+			c.ResponseWriter().WriteHeader(http.StatusForbidden)
 		} else {
-			ctx.Error(500, err.Error())
+			http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	payload, err := ctx.Req.Body().Bytes()
+	payload, err := c.Request().Body().Bytes()
 	if err != nil {
-		ctx.Error(500, err.Error())
+		http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	// NOTE: Currently only support GitHub
 	event, err := webhook.ParseGitHubEvent(payload)
 	if err != nil {
-		ctx.Error(500, err.Error())
+		http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		return
 	}
 
@@ -50,13 +54,13 @@ func Hook(ctx *context.Context) {
 		CollectorID: collector.ID,
 		Owner:       tool.FirstNonEmptyString(event.Repository.Owner.Login, event.Repository.Owner.Name),
 		RepoName:    event.Repository.Name,
-		EventType:   ctx.Req.Header.Get("X-GitHub-Event"),
+		EventType:   c.Request().Header.Get("X-GitHub-Event"),
 		Sender:      event.Sender.Login,
 		Payload:     string(payload),
 	}); err != nil {
-		ctx.Error(500, err.Error())
+		http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	ctx.Status(202)
+	c.ResponseWriter().WriteHeader(http.StatusAccepted)
 }

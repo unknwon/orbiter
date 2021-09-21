@@ -99,7 +99,7 @@ func main() {
 		auth.Basic(setting.BasicAuth.User, setting.BasicAuth.Password),
 	)
 
-	m.Post("/hook", route.Hook)
+	f.Post("/hook", route.Hook)
 
 	m.Group("/api", func() {
 		apiv1.RegisterRoutes(m)
