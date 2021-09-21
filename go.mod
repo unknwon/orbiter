@@ -4,11 +4,11 @@ go 1.17
 
 require (
 	github.com/dustin/go-humanize v1.0.0
+	github.com/flamego/auth v0.0.0-20210831041357-158bdcabc1f1
 	github.com/flamego/binding v0.0.0-20210920080236-58abb70d39fd
 	github.com/flamego/flamego v0.0.0-20210913073131-adc6656c34a1
 	github.com/flamego/template v0.0.0-20210914144450-be182d441b73
 	github.com/flamego/validator v0.0.0-20210920053956-d830f2bfdff6
-	github.com/go-macaron/binding v1.1.1
 	github.com/go-macaron/session v1.0.2
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/jinzhu/gorm v1.9.16

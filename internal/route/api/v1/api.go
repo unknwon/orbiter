@@ -15,7 +15,6 @@
 package v1
 
 import (
-	"github.com/go-macaron/binding"
 	"gopkg.in/macaron.v1"
 
 	"unknwon.dev/orbiter/internal/context"
@@ -49,9 +48,6 @@ func Contexter() macaron.Handler {
 }
 
 func RegisterRoutes(m *macaron.Macaron) {
-	bind := binding.Bind
-	_ = bind
-
 	m.Group("/v1", func() {
 		m.Get("/webhooks", ListWebhooks)
 	}, Contexter())

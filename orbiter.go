@@ -19,10 +19,10 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/flamego/auth"
 	"github.com/flamego/binding"
 	"github.com/flamego/flamego"
 	"github.com/flamego/template"
-	macaronBinding "github.com/go-macaron/binding"
 	"github.com/go-macaron/session"
 	"gopkg.in/macaron.v1"
 	log "unknwon.dev/clog/v2"
@@ -50,51 +50,54 @@ func main() {
 	m.Use(session.Sessioner())
 	m.Use(context.Contexter())
 
-	f := flamego.New()
+	f := flamego.New() // TODO: Use flamego.Classic()
 	f.Use(template.Templater(
 		template.Options{
 			FuncMaps: templateutil.NewFuncMap(),
 		},
 	))
 
-	bindIgnErr := macaronBinding.BindIgnErr
+	f.Group("",
+		func() {
+			f.Get("/", route.Dashboard)
 
-	m.Group("", func() {
-		f.Get("/", route.Dashboard)
-
-		f.Group("/collectors", func() {
-			f.Get("", route.Collectors)
-			f.Combo("/new").
-				Get(route.NewCollector).
-				Post(binding.Form(route.NewCollectorForm{}), route.NewCollectorPost)
-			f.Group("/{id}", func() {
-				f.Combo("").
-					Get(route.EditCollector).
-					Post(binding.Form(route.NewCollectorForm{}), route.EditCollectorPost)
-				f.Post("/regenerate_token", route.RegenerateCollectorSecret)
-				f.Post("/delete", route.DeleteCollector)
+			f.Group("/collectors", func() {
+				f.Get("", route.Collectors)
+				f.Combo("/new").
+					Get(route.NewCollector).
+					Post(binding.Form(route.NewCollectorForm{}), route.NewCollectorPost)
+				f.Group("/{id}", func() {
+					f.Combo("").
+						Get(route.EditCollector).
+						Post(binding.Form(route.NewCollectorForm{}), route.EditCollectorPost)
+					f.Post("/regenerate_token", route.RegenerateCollectorSecret)
+					f.Post("/delete", route.DeleteCollector)
+				})
 			})
-		})
 
-		m.Group("/applications", func() {
-			m.Get("", route.Applications)
-			m.Combo("/new").Get(route.NewApplication).
-				Post(bindIgnErr(route.NewApplicationForm{}), route.NewApplicationPost)
-			m.Group("/:id", func() {
-				m.Combo("").Get(route.EditApplication).
-					Post(bindIgnErr(route.NewApplicationForm{}), route.EditApplicationPost)
-				m.Post("/regenerate_token", route.RegenerateApplicationSecret)
-				m.Post("/delete", route.DeleteApplication)
+			f.Group("/applications", func() {
+				f.Get("", route.Applications)
+				f.Combo("/new").
+					Get(route.NewApplication).
+					Post(binding.Form(route.NewApplicationForm{}), route.NewApplicationPost)
+				f.Group("/{id}", func() {
+					f.Combo("").
+						Get(route.EditApplication).
+						Post(binding.Form(route.NewApplicationForm{}), route.EditApplicationPost)
+					f.Post("/regenerate_token", route.RegenerateApplicationSecret)
+					f.Post("/delete", route.DeleteApplication)
+				})
 			})
-		})
 
-		f.Group("/webhooks", func() {
-			f.Get("", route.Webhooks)
-			f.Get("/{id}", route.ViewWebhook)
-		})
+			f.Group("/webhooks", func() {
+				f.Get("", route.Webhooks)
+				f.Get("/{id}", route.ViewWebhook)
+			})
 
-		f.Get("/config", route.Config)
-	}, context.BasicAuth())
+			f.Get("/config", route.Config)
+		},
+		auth.Basic(setting.BasicAuth.User, setting.BasicAuth.Password),
+	)
 
 	m.Post("/hook", route.Hook)
 

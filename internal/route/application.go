@@ -16,122 +16,139 @@ package route
 
 import (
 	"fmt"
+	"net/http"
 
-	"unknwon.dev/orbiter/internal/context"
+	"github.com/flamego/binding"
+	"github.com/flamego/flamego"
+	"github.com/flamego/template"
+	"unknwon.dev/orbiter/internal/form"
+
 	"unknwon.dev/orbiter/internal/db"
 	"unknwon.dev/orbiter/internal/db/errors"
 )
 
-func Applications(ctx *context.Context) {
-	ctx.Data["Title"] = "Applications"
-	ctx.Data["PageIsApplication"] = true
+// GET /applications
+func Applications(w http.ResponseWriter, t template.Template, data template.Data) {
+	data["Title"] = "Applications"
+	data["PageIsApplication"] = true
 
 	apps, err := db.ListApplications()
 	if err != nil {
-		ctx.Handle(500, "ListApplications", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	ctx.Data["Applications"] = apps
+	data["Applications"] = apps
 
-	ctx.HTML(200, "application/list")
+	t.HTML(http.StatusOK, "application/list")
 }
 
-func NewApplication(ctx *context.Context) {
-	ctx.Data["Title"] = "New Application"
-	ctx.Data["PageIsApplication"] = true
-	ctx.HTML(200, "application/new")
+// GET /applications/new
+func NewApplication(t template.Template, data template.Data) {
+	data["Title"] = "New Application"
+	data["PageIsApplication"] = true
+	t.HTML(http.StatusOK, "application/new")
 }
 
 type NewApplicationForm struct {
-	Name string `binding:"Required;MaxSize(30)" name:"Application name"`
+	Name string `form:"name" validate:"required,max=30" name:"Application name"`
 }
 
-func NewApplicationPost(ctx *context.Context, form NewApplicationForm) {
-	ctx.Data["Title"] = "New Application"
-	ctx.Data["PageIsApplication"] = true
+// POST /applications/new
+func NewApplicationPost(c flamego.Context, t template.Template, data template.Data, errs binding.Errors, f NewApplicationForm) {
+	data["Title"] = "New Application"
+	data["PageIsApplication"] = true
 
-	if ctx.HasError() {
-		ctx.HTML(200, "application/new")
+	if len(errs) > 0 {
+		form.Validate(errs, data, f)
+		t.HTML(http.StatusOK, "application/new")
 		return
 	}
 
-	app, err := db.NewApplication(form.Name)
+	app, err := db.NewApplication(f.Name)
 	if err != nil {
 		if errors.IsApplicationExists(err) {
-			ctx.Data["Err_Name"] = true
-			ctx.RenderWithErr("Application name has been used.", "application/new", form)
+			form.AssignForm(f, data)
+			data["Error"] = "Application name has been used."
+			data["Err_Name"] = true
+			t.HTML(http.StatusOK, "application/new")
 		} else {
-			ctx.Handle(500, "NewApplication", err)
+			http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	ctx.Redirect(fmt.Sprintf("/applications/%d", app.ID))
+	c.Redirect(fmt.Sprintf("/applications/%d", app.ID))
 }
 
-func parseApplicationByID(ctx *context.Context) *db.Application {
-	app, err := db.GetApplicationByID(ctx.ParamsInt64(":id"))
+func parseApplicationByID(c flamego.Context) *db.Application {
+	app, err := db.GetApplicationByID(c.ParamInt64("id"))
 	if err != nil {
 		if errors.IsApplicationNotFound(err) {
-			ctx.Handle(404, "EditApplication", nil)
+			http.NotFound(c.ResponseWriter(), c.Request().Request)
 		} else {
-			ctx.Handle(500, "GetApplicationByID", err)
+			http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		}
 		return nil
 	}
-	ctx.Data["Application"] = app
 	return app
 }
 
-func EditApplication(ctx *context.Context) {
-	ctx.Data["Title"] = "Edit Application"
-	ctx.Data["PageIsApplication"] = true
+// GET /applications/{id}
+func EditApplication(c flamego.Context, t template.Template, data template.Data) {
+	data["Title"] = "Edit Application"
+	data["PageIsApplication"] = true
 
-	parseApplicationByID(ctx)
-	if ctx.Written() {
+	data["Application"] = parseApplicationByID(c)
+	if c.ResponseWriter().Written() {
 		return
 	}
 
-	ctx.HTML(200, "application/edit")
+	t.HTML(http.StatusOK, "application/edit")
 }
 
-func EditApplicationPost(ctx *context.Context, form NewApplicationForm) {
-	ctx.Data["Title"] = "Edit Application"
-	ctx.Data["PageIsApplication"] = true
+// POST /applications/{id}
+func EditApplicationPost(c flamego.Context, t template.Template, data template.Data, f NewApplicationForm) {
+	data["Title"] = "Edit Application"
+	data["PageIsApplication"] = true
 
-	app := parseApplicationByID(ctx)
-	if ctx.Written() {
+	app := parseApplicationByID(c)
+	if c.ResponseWriter().Written() {
 		return
 	}
+	data["Application"] = app
 
-	app.Name = form.Name
+	app.Name = f.Name
 	if err := db.UpdateApplication(app); err != nil {
 		if errors.IsApplicationExists(err) {
-			ctx.Data["Err_Name"] = true
-			ctx.RenderWithErr("Application name has been used.", "application/edit", form)
+			data["Error"] = "Application name has been used."
+			data["Err_Name"] = true
+			t.HTML(http.StatusOK, "application/edit")
 		} else {
-			ctx.Error(500, err.Error())
+			http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	ctx.Redirect(fmt.Sprintf("/applications/%d", app.ID))
+	c.Redirect(fmt.Sprintf("/applications/%d", app.ID))
 }
 
-func RegenerateApplicationSecret(ctx *context.Context) {
-	if err := db.RegenerateApplicationToken(ctx.ParamsInt64(":id")); err != nil {
-		ctx.Error(500, err.Error())
+// POST /applications/{id}/regenerate_token
+func RegenerateApplicationSecret(c flamego.Context) {
+	id := c.ParamInt64("id")
+	if err := db.RegenerateApplicationToken(id); err != nil {
+		http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	ctx.Redirect(fmt.Sprintf("/applications/%d", ctx.ParamsInt64(":id")))
+	c.Redirect(fmt.Sprintf("/applications/%d", id))
 }
 
-func DeleteApplication(ctx *context.Context) {
-	if err := db.DeleteApplicationByID(ctx.ParamsInt64(":id")); err != nil {
-		ctx.Error(500, err.Error())
+// POST /applications/{id}/delete
+func DeleteApplication(c flamego.Context) {
+	if err := db.DeleteApplicationByID(c.ParamInt64("id")); err != nil {
+		http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	ctx.Redirect("/applications")
+	c.Redirect("/applications")
 }
