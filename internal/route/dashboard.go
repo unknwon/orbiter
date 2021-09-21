@@ -19,12 +19,13 @@ import (
 
 	"github.com/flamego/template"
 
-	"unknwon.dev/orbiter/internal/models"
+	"unknwon.dev/orbiter/internal/db"
 )
 
+// GET /
 func Dashboard(t template.Template, data template.Data) {
 	data["Title"] = "Dashboard"
 	data["PageIsDashboard"] = true
-	data["NumWebhooks"] = models.CountWebhook()
+	data["NumWebhooks"] = db.CountWebhook()
 	t.HTML(http.StatusOK, "dashboard")
 }

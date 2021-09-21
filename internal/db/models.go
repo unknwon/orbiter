@@ -12,14 +12,14 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package models
+package db
 
 import (
 	"fmt"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
-	log "github.com/sirupsen/logrus"
+	log "unknwon.dev/clog/v2"
 
 	"unknwon.dev/orbiter/internal/setting"
 )
@@ -34,7 +34,7 @@ func init() {
 	db, err := gorm.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&parseTime=true",
 		setting.Database.User, setting.Database.Password, setting.Database.Host, setting.Database.Name))
 	if err != nil {
-		log.Fatalf("Fail to open database: %s", err)
+		log.Fatal("Fail to open database: %v", err)
 	}
 	x = &Engine{db}
 

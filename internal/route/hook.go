@@ -16,14 +16,14 @@ package route
 
 import (
 	"unknwon.dev/orbiter/internal/context"
-	"unknwon.dev/orbiter/internal/models"
-	"unknwon.dev/orbiter/internal/models/errors"
+	"unknwon.dev/orbiter/internal/db"
+	"unknwon.dev/orbiter/internal/db/errors"
 	"unknwon.dev/orbiter/internal/tool"
 	"unknwon.dev/orbiter/internal/webhook"
 )
 
 func Hook(ctx *context.Context) {
-	collector, err := models.GetCollectorBySecret(ctx.Query("secret"))
+	collector, err := db.GetCollectorBySecret(ctx.Query("secret"))
 	if err != nil {
 		if errors.IsCollectorNotFound(err) {
 			ctx.Error(403)
@@ -46,7 +46,7 @@ func Hook(ctx *context.Context) {
 		return
 	}
 
-	if err = models.NewWebhook(&models.Webhook{
+	if err = db.NewWebhook(&db.Webhook{
 		CollectorID: collector.ID,
 		Owner:       tool.FirstNonEmptyString(event.Repository.Owner.Login, event.Repository.Owner.Name),
 		RepoName:    event.Repository.Name,

@@ -15,9 +15,9 @@
 package setting
 
 import (
-	log "github.com/sirupsen/logrus"
 	"github.com/unknwon/com"
 	"gopkg.in/ini.v1"
+	log "unknwon.dev/clog/v2"
 )
 
 var (
@@ -44,19 +44,19 @@ func init() {
 	var err error
 	Cfg, err = ini.Load("conf/app.ini")
 	if err != nil {
-		log.Fatalf("Fail to load configuration: %s", err)
+		log.Fatal("Fail to load configuration: %v", err)
 	}
 	if com.IsFile("custom/app.ini") {
 		if err = Cfg.Append("custom/app.ini"); err != nil {
-			log.Fatalf("Fail to load custom configuration: %s", err)
+			log.Fatal("Fail to load custom configuration: %v", err)
 		}
 	}
 	Cfg.NameMapper = ini.AllCapsUnderscore
 
 	HTTPPort = Cfg.Section("").Key("HTTP_PORT").MustInt(8085)
 	if err = Cfg.Section("basic_auth").MapTo(&BasicAuth); err != nil {
-		log.Fatalf("Fail to map section 'basic_auth': %s", err)
+		log.Fatal("Fail to map section 'basic_auth': %v", err)
 	} else if err = Cfg.Section("database").MapTo(&Database); err != nil {
-		log.Fatalf("Fail to map section 'database': %s", err)
+		log.Fatal("Fail to map section 'database': %v", err)
 	}
 }

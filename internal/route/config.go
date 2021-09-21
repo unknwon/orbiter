@@ -20,6 +20,7 @@ import (
 	"github.com/flamego/template"
 )
 
+// GET /config
 func Config(t template.Template, data template.Data) {
 	data["Title"] = "Configuration"
 	data["PageIsConfig"] = true

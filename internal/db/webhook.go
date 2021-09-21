@@ -12,14 +12,14 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package models
+package db
 
 import (
 	"time"
 
-	log "github.com/sirupsen/logrus"
+	log "unknwon.dev/clog/v2"
 
-	"unknwon.dev/orbiter/internal/models/errors"
+	"unknwon.dev/orbiter/internal/db/errors"
 )
 
 // Webhook represents a history record of webhook.
@@ -96,7 +96,7 @@ func QueryWebhooks(opts QueryWebhookOptions) ([]*Webhook, error) {
 func CountWebhook() int64 {
 	var count int64
 	if err := x.Model(new(Webhook)).Count(&count).Error; err != nil {
-		log.Printf("ERROR: CountWebhook: %v", err)
+		log.Error("CountWebhook: %v", err)
 	}
 	return count
 }

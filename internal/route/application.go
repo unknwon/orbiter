@@ -22,15 +22,15 @@ import (
 
 	"unknwon.dev/orbiter/internal/context"
 	"unknwon.dev/orbiter/internal/form"
-	"unknwon.dev/orbiter/internal/models"
-	"unknwon.dev/orbiter/internal/models/errors"
+	"unknwon.dev/orbiter/internal/db"
+	"unknwon.dev/orbiter/internal/db/errors"
 )
 
 func Applications(ctx *context.Context) {
 	ctx.Data["Title"] = "Applications"
 	ctx.Data["PageIsApplication"] = true
 
-	apps, err := models.ListApplications()
+	apps, err := db.ListApplications()
 	if err != nil {
 		ctx.Handle(500, "ListApplications", err)
 		return
@@ -63,7 +63,7 @@ func NewApplicationPost(ctx *context.Context, form NewApplicationForm) {
 		return
 	}
 
-	app, err := models.NewApplication(form.Name)
+	app, err := db.NewApplication(form.Name)
 	if err != nil {
 		if errors.IsApplicationExists(err) {
 			ctx.Data["Err_Name"] = true
@@ -77,8 +77,8 @@ func NewApplicationPost(ctx *context.Context, form NewApplicationForm) {
 	ctx.Redirect(fmt.Sprintf("/applications/%d", app.ID))
 }
 
-func parseApplicationByID(ctx *context.Context) *models.Application {
-	app, err := models.GetApplicationByID(ctx.ParamsInt64(":id"))
+func parseApplicationByID(ctx *context.Context) *db.Application {
+	app, err := db.GetApplicationByID(ctx.ParamsInt64(":id"))
 	if err != nil {
 		if errors.IsApplicationNotFound(err) {
 			ctx.Handle(404, "EditApplication", nil)
@@ -113,7 +113,7 @@ func EditApplicationPost(ctx *context.Context, form NewApplicationForm) {
 	}
 
 	app.Name = form.Name
-	if err := models.UpdateApplication(app); err != nil {
+	if err := db.UpdateApplication(app); err != nil {
 		if errors.IsApplicationExists(err) {
 			ctx.Data["Err_Name"] = true
 			ctx.RenderWithErr("Application name has been used.", "application/edit", form)
@@ -127,7 +127,7 @@ func EditApplicationPost(ctx *context.Context, form NewApplicationForm) {
 }
 
 func RegenerateApplicationSecret(ctx *context.Context) {
-	if err := models.RegenerateApplicationToken(ctx.ParamsInt64(":id")); err != nil {
+	if err := db.RegenerateApplicationToken(ctx.ParamsInt64(":id")); err != nil {
 		ctx.Error(500, err.Error())
 		return
 	}
@@ -136,7 +136,7 @@ func RegenerateApplicationSecret(ctx *context.Context) {
 }
 
 func DeleteApplication(ctx *context.Context) {
-	if err := models.DeleteApplicationByID(ctx.ParamsInt64(":id")); err != nil {
+	if err := db.DeleteApplicationByID(ctx.ParamsInt64(":id")); err != nil {
 		ctx.Error(500, err.Error())
 		return
 	}

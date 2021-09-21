@@ -23,8 +23,8 @@ import (
 	"github.com/flamego/template"
 	"github.com/go-macaron/binding"
 	"github.com/go-macaron/session"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/macaron.v1"
+	log "unknwon.dev/clog/v2"
 
 	"unknwon.dev/orbiter/internal/context"
 	"unknwon.dev/orbiter/internal/route"
@@ -34,7 +34,13 @@ import (
 )
 
 func main() {
-	log.Printf("Orbiter %s", setting.Version)
+	if err := log.NewConsole(); err != nil {
+		panic("error init logger: " + err.Error())
+	}
+	defer log.Stop()
+
+	log.Info("Orbiter: %s", setting.Version)
+
 	m := macaron.Classic()
 	m.Use(macaron.Renderer(macaron.RenderOptions{
 		Funcs:      templateutil.NewFuncMap(),
@@ -43,17 +49,17 @@ func main() {
 	m.Use(session.Sessioner())
 	m.Use(context.Contexter())
 
+	f := flamego.New()
+	f.Use(template.Templater(
+		template.Options{
+			FuncMaps: templateutil.NewFuncMap(),
+		},
+	))
+
 	bindIgnErr := binding.BindIgnErr
 
 	m.Group("", func() {
-		f := flamego.New()
-		f.Use(template.Templater(
-			template.Options{
-				FuncMaps: templateutil.NewFuncMap(),
-			},
-		))
 		f.Get("/", route.Dashboard)
-		m.Get("/", f.ServeHTTP)
 
 		m.Group("/collectors", func() {
 			m.Get("", route.Collectors)
@@ -79,13 +85,12 @@ func main() {
 			})
 		})
 
-		m.Group("/webhooks", func() {
-			m.Get("", route.Webhooks)
-			m.Get("/:id", route.ViewWebhook)
+		f.Group("/webhooks", func() {
+			f.Get("", route.Webhooks)
+			f.Get("/{id}", route.ViewWebhook)
 		})
 
 		f.Get("/config", route.Config)
-		m.Get("/config", f.ServeHTTP)
 	}, context.BasicAuth())
 
 	m.Post("/hook", route.Hook)
@@ -94,7 +99,9 @@ func main() {
 		apiv1.RegisterRoutes(m)
 	})
 
+	m.Any("*", f.ServeHTTP)
+
 	listenAddr := fmt.Sprintf("0.0.0.0:%d", setting.HTTPPort)
-	log.Println("Listening on", listenAddr)
-	log.Fatal(http.ListenAndServe(listenAddr, m))
+	log.Info("Listening on http://%s...", listenAddr)
+	log.Fatal("Failed to start server: %v", http.ListenAndServe(listenAddr, m))
 }

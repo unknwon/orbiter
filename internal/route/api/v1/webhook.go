@@ -15,11 +15,11 @@
 package v1
 
 import (
-	"unknwon.dev/orbiter/internal/models"
+	"unknwon.dev/orbiter/internal/db"
 )
 
 func ListWebhooks(ctx *Context) {
-	webhooks, err := models.QueryWebhooks(models.QueryWebhookOptions{
+	webhooks, err := db.QueryWebhooks(db.QueryWebhookOptions{
 		CollectorID: ctx.QueryInt64("collector_id"),
 		Owner:       ctx.Query("owner"),
 		RepoName:    ctx.Query("repo_name"),

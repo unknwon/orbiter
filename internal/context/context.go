@@ -20,8 +20,8 @@ import (
 	"strings"
 
 	"github.com/go-macaron/session"
-	log "github.com/sirupsen/logrus"
 	"gopkg.in/macaron.v1"
+	log "unknwon.dev/clog/v2"
 
 	"unknwon.dev/orbiter/internal/form"
 	"unknwon.dev/orbiter/internal/setting"
@@ -59,7 +59,7 @@ func (ctx *Context) RenderWithErr(msg string, tpl string, userForm interface{}) 
 // Handle handles and logs error by given status.
 func (ctx *Context) Handle(status int, title string, err error) {
 	if err != nil {
-		log.Printf("%s: %v", title, err)
+		log.Trace("%s: %v", title, err)
 		if macaron.Env != macaron.PROD {
 			ctx.Data["ErrorMsg"] = err
 		}

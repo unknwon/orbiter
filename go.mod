@@ -11,10 +11,10 @@ require (
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/jinzhu/gorm v1.9.16
 	github.com/satori/go.uuid v1.2.0
-	github.com/sirupsen/logrus v1.8.1
 	github.com/unknwon/com v1.0.1
 	gopkg.in/ini.v1 v1.62.0
 	gopkg.in/macaron.v1 v1.4.0
+	unknwon.dev/clog/v2 v2.2.0
 )
 
 require (

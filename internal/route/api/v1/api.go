@@ -19,18 +19,18 @@ import (
 	"gopkg.in/macaron.v1"
 
 	"unknwon.dev/orbiter/internal/context"
-	"unknwon.dev/orbiter/internal/models"
-	"unknwon.dev/orbiter/internal/models/errors"
+	"unknwon.dev/orbiter/internal/db"
+	"unknwon.dev/orbiter/internal/db/errors"
 )
 
 type Context struct {
 	*context.Context
-	App *models.Application
+	App *db.Application
 }
 
 func Contexter() macaron.Handler {
 	return func(c *context.Context) {
-		app, err := models.GetApplicationByToken(c.Query("token"))
+		app, err := db.GetApplicationByToken(c.Query("token"))
 		if err != nil {
 			if errors.IsApplicationExists(err) {
 				c.Error(403)

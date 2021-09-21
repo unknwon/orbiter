@@ -12,13 +12,13 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-package models
+package db
 
 import (
 	"fmt"
 	"time"
 
-	"unknwon.dev/orbiter/internal/models/errors"
+	"unknwon.dev/orbiter/internal/db/errors"
 	"unknwon.dev/orbiter/internal/tool"
 )
 

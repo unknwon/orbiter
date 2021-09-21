@@ -22,15 +22,15 @@ import (
 
 	"unknwon.dev/orbiter/internal/context"
 	"unknwon.dev/orbiter/internal/form"
-	"unknwon.dev/orbiter/internal/models"
-	"unknwon.dev/orbiter/internal/models/errors"
+	"unknwon.dev/orbiter/internal/db"
+	"unknwon.dev/orbiter/internal/db/errors"
 )
 
 func Collectors(ctx *context.Context) {
 	ctx.Data["Title"] = "Collectors"
 	ctx.Data["PageIsCollector"] = true
 
-	collectors, err := models.ListCollectors()
+	collectors, err := db.ListCollectors()
 	if err != nil {
 		ctx.Error(500, err.Error())
 		return
@@ -63,7 +63,7 @@ func NewCollectorPost(ctx *context.Context, form NewCollectorForm) {
 		return
 	}
 
-	collector, err := models.NewCollector(form.Name, models.CollectTypeGitHub)
+	collector, err := db.NewCollector(form.Name, db.CollectTypeGitHub)
 	if err != nil {
 		if errors.IsCollectorExists(err) {
 			ctx.Data["Err_Name"] = true
@@ -77,8 +77,8 @@ func NewCollectorPost(ctx *context.Context, form NewCollectorForm) {
 	ctx.Redirect(fmt.Sprintf("/collectors/%d", collector.ID))
 }
 
-func parseCollectorByID(ctx *context.Context) *models.Collector {
-	collector, err := models.GetCollectorByID(ctx.ParamsInt64(":id"))
+func parseCollectorByID(ctx *context.Context) *db.Collector {
+	collector, err := db.GetCollectorByID(ctx.ParamsInt64(":id"))
 	if err != nil {
 		if errors.IsCollectorNotFound(err) {
 			ctx.Handle(404, "EditApplication", nil)
@@ -113,7 +113,7 @@ func EditCollectorPost(ctx *context.Context, form NewCollectorForm) {
 	}
 
 	collector.Name = form.Name
-	if err := models.UpdateCollector(collector); err != nil {
+	if err := db.UpdateCollector(collector); err != nil {
 		if errors.IsCollectorExists(err) {
 			ctx.Data["Err_Name"] = true
 			ctx.RenderWithErr("Collector name has been used.", "collector/edit", form)
@@ -127,7 +127,7 @@ func EditCollectorPost(ctx *context.Context, form NewCollectorForm) {
 }
 
 func RegenerateCollectorSecret(ctx *context.Context) {
-	if err := models.RegenerateCollectorSecret(ctx.ParamsInt64(":id")); err != nil {
+	if err := db.RegenerateCollectorSecret(ctx.ParamsInt64(":id")); err != nil {
 		ctx.Error(500, err.Error())
 		return
 	}
@@ -136,7 +136,7 @@ func RegenerateCollectorSecret(ctx *context.Context) {
 }
 
 func DeleteCollector(ctx *context.Context) {
-	if err := models.DeleteCollectorByID(ctx.ParamsInt64(":id")); err != nil {
+	if err := db.DeleteCollectorByID(ctx.ParamsInt64(":id")); err != nil {
 		ctx.Error(500, err.Error())
 		return
 	}

@@ -17,52 +17,60 @@ package route
 import (
 	"bytes"
 	"encoding/json"
+	"net/http"
 
-	"unknwon.dev/orbiter/internal/context"
-	"unknwon.dev/orbiter/internal/models"
-	"unknwon.dev/orbiter/internal/models/errors"
+	"github.com/flamego/flamego"
+	"github.com/flamego/template"
+
+	"unknwon.dev/orbiter/internal/db"
+	"unknwon.dev/orbiter/internal/db/errors"
 )
 
-func Webhooks(ctx *context.Context) {
-	ctx.Data["Title"] = "Webhooks"
-	ctx.Data["PageIsWebhook"] = true
+// GET /webhooks
+func Webhooks(w http.ResponseWriter, t template.Template, data template.Data) {
+	data["Title"] = "Webhooks"
+	data["PageIsWebhook"] = true
 
-	webhooks, err := models.QueryWebhooks(models.QueryWebhookOptions{
-		Limit: 50,
-		Order: "created desc",
-	})
+	webhooks, err := db.QueryWebhooks(
+		db.QueryWebhookOptions{
+			Limit: 50,
+			Order: "created desc",
+		},
+	)
 	if err != nil {
-		ctx.Error(500, err.Error())
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	ctx.Data["Webhooks"] = webhooks
+	data["Webhooks"] = webhooks
 
-	ctx.HTML(200, "webhook/list")
+	t.HTML(http.StatusOK, "webhook/list")
 }
 
-func ViewWebhook(ctx *context.Context) {
-	ctx.Data["Title"] = "View Webhook"
-	ctx.Data["PageIsWebhook"] = true
-	ctx.Data["RequireHighlightJS"] = true
+// GET /webhooks/{id}
+func ViewWebhook(c flamego.Context, t template.Template, data template.Data) {
+	data["Title"] = "View Webhook"
+	data["PageIsWebhook"] = true
+	data["RequireHighlightJS"] = true
 
-	webhook, err := models.GetWebhookByID(ctx.ParamsInt64(":id"))
+	webhook, err := db.GetWebhookByID(c.ParamInt64("id"))
 	if err != nil {
 		if errors.IsWebhookNotFound(err) {
-			ctx.Handle(404, "GetWebhookByID", nil)
+			http.NotFound(c.ResponseWriter(), c.Request().Request)
 		} else {
-			ctx.Handle(500, "GetWebhookByID", err)
+			http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
-	ctx.Data["Webhook"] = webhook
+	data["Webhook"] = webhook
 
 	// Prettify JSON in case it is not.
-	buf := new(bytes.Buffer)
-	if err = json.Indent(buf, []byte(webhook.Payload), "", "  "); err != nil {
-		ctx.Handle(500, "json.Indent", err)
+	var buf bytes.Buffer
+	err = json.Indent(&buf, []byte(webhook.Payload), "", "  ")
+	if err != nil {
+		http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		return
 	}
 	webhook.Payload = buf.String()
 
-	ctx.HTML(200, "webhook/view")
+	t.HTML(http.StatusOK, "webhook/view")
 }
