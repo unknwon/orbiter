@@ -104,6 +104,12 @@ GET /api/v1/webhooks?token=mysecretdefense&event_type=issue_comment&after=145474
 - [AdminLTE](https://almsaeedstudio.com/): Open source Bootstrap 3 admin template
 - [Font Awesome](http://fontawesome.io/): The iconic font and CSS toolkit
 
+## Open-source, not open-contribution
+
+_Quote from [benbjohnson/litestream](https://github.com/benbjohnson/litestream#open-source-not-open-contribution):_
+
+> I am grateful for community involvement, bug reports, & feature requests. I do not wish to come off as anything but welcoming, however, I've made the decision to keep this project closed to contributions for my own mental health and long term viability of the project.
+
 ## License
 
 This project is under the Apache License, Version 2.0. See the [LICENSE](LICENSE) file for the full license text.
