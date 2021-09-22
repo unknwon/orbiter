@@ -17,6 +17,7 @@ package tool
 import (
 	"crypto/sha1"
 	"encoding/hex"
+	"os"
 
 	"github.com/satori/go.uuid"
 )
@@ -31,4 +32,13 @@ func EncodeSHA1(str string) string {
 // NewSecretToken generates and returns a random secret token based on SHA1.
 func NewSecretToken() string {
 	return EncodeSHA1(uuid.NewV4().String())
+}
+
+// IsFile returns true if given path exists as a file (i.e. not a directory).
+func IsFile(path string) bool {
+	f, e := os.Stat(path)
+	if e != nil {
+		return false
+	}
+	return !f.IsDir()
 }

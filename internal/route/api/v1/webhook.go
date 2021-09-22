@@ -15,23 +15,28 @@
 package v1
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"unknwon.dev/orbiter/internal/db"
 )
 
-func ListWebhooks(ctx *Context) {
+func ListWebhooks(c *Context) {
 	webhooks, err := db.QueryWebhooks(db.QueryWebhookOptions{
-		CollectorID: ctx.QueryInt64("collector_id"),
-		Owner:       ctx.Query("owner"),
-		RepoName:    ctx.Query("repo_name"),
-		EventType:   ctx.Query("event_type"),
-		Sender:      ctx.Query("sender"),
-		After:       ctx.QueryInt64("after"),
-		Limit:       ctx.QueryInt64("limit"),
+		CollectorID: c.QueryInt64("collector_id"),
+		Owner:       c.Query("owner"),
+		RepoName:    c.Query("repo_name"),
+		EventType:   c.Query("event_type"),
+		Sender:      c.Query("sender"),
+		After:       c.QueryInt64("after"),
+		Limit:       c.QueryInt64("limit"),
 	})
 	if err != nil {
-		ctx.Error(500, err.Error())
+		http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	ctx.JSON(200, webhooks)
+	c.ResponseWriter().Header().Set("Content-Type", "application/json; charset=utf-8")
+	c.ResponseWriter().WriteHeader(http.StatusOK)
+	_ = json.NewEncoder(c.ResponseWriter()).Encode(webhooks)
 }

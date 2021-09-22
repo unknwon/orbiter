@@ -15,26 +15,27 @@
 package v1
 
 import (
-	"gopkg.in/macaron.v1"
+	"net/http"
 
-	"unknwon.dev/orbiter/internal/context"
+	"github.com/flamego/flamego"
+
 	"unknwon.dev/orbiter/internal/db"
 	"unknwon.dev/orbiter/internal/db/errors"
 )
 
 type Context struct {
-	*context.Context
+	flamego.Context
 	App *db.Application
 }
 
-func Contexter() macaron.Handler {
-	return func(c *context.Context) {
+func Contexter() flamego.Handler {
+	return func(c flamego.Context) {
 		app, err := db.GetApplicationByToken(c.Query("token"))
 		if err != nil {
 			if errors.IsApplicationExists(err) {
-				c.Error(403)
+				c.ResponseWriter().WriteHeader(http.StatusForbidden)
 			} else {
-				c.Error(500, err.Error())
+				http.Error(c.ResponseWriter(), err.Error(), http.StatusInternalServerError)
 			}
 			return
 		}
@@ -47,8 +48,8 @@ func Contexter() macaron.Handler {
 	}
 }
 
-func RegisterRoutes(m *macaron.Macaron) {
-	m.Group("/v1", func() {
-		m.Get("/webhooks", ListWebhooks)
+func RegisterRoutes(f *flamego.Flame) {
+	f.Group("/v1", func() {
+		f.Get("/webhooks", ListWebhooks)
 	}, Contexter())
 }

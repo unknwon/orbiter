@@ -23,11 +23,8 @@ import (
 	"github.com/flamego/binding"
 	"github.com/flamego/flamego"
 	"github.com/flamego/template"
-	"github.com/go-macaron/session"
-	"gopkg.in/macaron.v1"
 	log "unknwon.dev/clog/v2"
 
-	"unknwon.dev/orbiter/internal/context"
 	"unknwon.dev/orbiter/internal/route"
 	apiv1 "unknwon.dev/orbiter/internal/route/api/v1"
 	"unknwon.dev/orbiter/internal/setting"
@@ -42,15 +39,7 @@ func main() {
 
 	log.Info("Orbiter: %s", setting.Version)
 
-	m := macaron.Classic()
-	m.Use(macaron.Renderer(macaron.RenderOptions{
-		Funcs:      templateutil.NewFuncMap(),
-		IndentJSON: macaron.Env != macaron.PROD,
-	}))
-	m.Use(session.Sessioner())
-	m.Use(context.Contexter())
-
-	f := flamego.New() // TODO: Use flamego.Classic()
+	f := flamego.Classic()
 	f.Use(template.Templater(
 		template.Options{
 			FuncMaps: templateutil.NewFuncMap(),
@@ -101,13 +90,11 @@ func main() {
 
 	f.Post("/hook", route.Hook)
 
-	m.Group("/api", func() {
-		apiv1.RegisterRoutes(m)
+	f.Group("/api", func() {
+		apiv1.RegisterRoutes(f)
 	})
-
-	m.Any("*", f.ServeHTTP)
 
 	listenAddr := fmt.Sprintf("0.0.0.0:%d", setting.HTTPPort)
 	log.Info("Listening on http://%s...", listenAddr)
-	log.Fatal("Failed to start server: %v", http.ListenAndServe(listenAddr, m))
+	log.Fatal("Failed to start server: %v", http.ListenAndServe(listenAddr, f))
 }

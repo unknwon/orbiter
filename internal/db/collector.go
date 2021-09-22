@@ -16,9 +16,8 @@ package db
 
 import (
 	"fmt"
+	"strconv"
 	"time"
-
-	"github.com/unknwon/com"
 
 	"unknwon.dev/orbiter/internal/db/errors"
 	"unknwon.dev/orbiter/internal/tool"
@@ -35,7 +34,7 @@ func (t CollectType) String() string {
 	case CollectTypeGitHub:
 		return "GitHub"
 	}
-	return com.ToStr(t)
+	return strconv.Itoa(int(t))
 }
 
 // Collector represents a type of webhook collection to be stored.

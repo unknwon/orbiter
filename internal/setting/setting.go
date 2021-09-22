@@ -15,9 +15,10 @@
 package setting
 
 import (
-	"github.com/unknwon/com"
 	"gopkg.in/ini.v1"
 	log "unknwon.dev/clog/v2"
+
+	"unknwon.dev/orbiter/internal/tool"
 )
 
 var (
@@ -46,12 +47,12 @@ func init() {
 	if err != nil {
 		log.Fatal("Fail to load configuration: %v", err)
 	}
-	if com.IsFile("custom/app.ini") {
+	if tool.IsFile("custom/app.ini") {
 		if err = Cfg.Append("custom/app.ini"); err != nil {
 			log.Fatal("Fail to load custom configuration: %v", err)
 		}
 	}
-	Cfg.NameMapper = ini.AllCapsUnderscore
+	Cfg.NameMapper = ini.SnackCase
 
 	HTTPPort = Cfg.Section("").Key("HTTP_PORT").MustInt(8085)
 	if err = Cfg.Section("basic_auth").MapTo(&BasicAuth); err != nil {
