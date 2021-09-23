@@ -21,10 +21,10 @@ import (
 	"github.com/flamego/binding"
 	"github.com/flamego/flamego"
 	"github.com/flamego/template"
-	"unknwon.dev/orbiter/internal/form"
 
 	"unknwon.dev/orbiter/internal/db"
 	"unknwon.dev/orbiter/internal/db/errors"
+	"unknwon.dev/orbiter/internal/form"
 )
 
 // GET /applications
